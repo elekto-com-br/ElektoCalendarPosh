@@ -60,31 +60,54 @@ A holiday file is plain UTF-8 text:
 ```text
 # Comments start with '#'. Blank lines are ignored.
 
-# Optional: the non-working weekdays, by English name. Saturday and Sunday when omitted.
+# Optional, before the first holiday: the non-working weekdays, by English name.
+# Saturday and Sunday when omitted.
 Saturday Sunday
 
 # One holiday per line, as yyyy-MM-dd; the rest of the line is a free description.
 2026-01-01  New Year's Day
 2026-02-16  Carnival Monday
 2026-11-20  Black Consciousness Day
+2026-12-25  Christmas Day
+2027-01-01  New Year's Day
 ```
 
-- The weekday names can share a line or take one each, and are case-insensitive.
+- The weekday names come before the first holiday. They can share a line or take one each, and are case-insensitive.
 - Any other line is an error that names the file and the line: a typo never silently drops a holiday.
-- A bizdays `.cal` file is a valid holiday file. Note that a file declaring no weekday gets Saturday and Sunday here, while bizdays would take every weekday as a business day.
 - The calendar is named after the file (`br` for `br.txt`).
 - A file is read once and read again only when it changes, so long-running scripts and schedulers can pass the path on every call and still pick up a new version of the file.
 
-### Coverage
+#### Every Day a Workday: `NoWeekend`
 
-A calendar with holidays covers the whole years they span: a file listing holidays from 2001 to 2099 covers 2001-01-01 to 2099-12-31. Asking about a date outside that period is an error (`ArgumentOutOfRangeException`, error id `DateOutsideCalendar`), because the calendar cannot know the holidays of a year it does not list:
+For a calendar where no day of the week is a day off (only the holidays are), write `NoWeekend` as the first line that is not a comment:
 
 ```text
-Get-NextWorkday: Calendar 'br' covers 2001-01-01 to 2099-12-31 and cannot tell whether 2100-01-01 is a workday.
-Add the holidays of 2100 to '/srv/holidays/br.txt'.
+# Treasury operations, seven days a week
+NoWeekend
+
+2026-01-01  New Year's Day
+2026-12-25  Christmas Day
 ```
 
-A calendar without holidays (the default one, or one with only weekdays declared) covers every date.
+`NoWeekend` stands alone: it cannot share its line, nor come after weekday names or holidays.
+
+#### bizdays Files
+
+A `.cal` file of [bizdays](https://github.com/wilsonfreitas/python-bizdays) is a valid holiday file, with one difference: a file that declares no weekday gets Saturday and Sunday here, while bizdays would make every day a business day. Such a file needs `NoWeekend` at the top to mean the same thing here.
+
+### Coverage
+
+As in RiskSystem, a calendar with holidays covers from its first holiday to its last. Asking about a date outside that period is an error (`ArgumentOutOfRangeException`, error id `DateOutsideCalendar`), because the calendar cannot know the holidays it does not list:
+
+```text
+PS> Test-Workday 2099-12-28 -Calendar /srv/holidays/br.txt
+Test-Workday: Calendar 'br' covers 2001-01-01 to 2099-12-25 and cannot tell whether 2099-12-28 is a workday.
+Add the holidays after 2099-12-25 to '/srv/holidays/br.txt'.
+```
+
+To cover a year up to December 31st, list the next January 1st too, as the example above does with 2027-01-01, and as [Examples/br-national.txt](Examples/br-national.txt) does with 2100-01-01.
+
+A calendar with a single holiday covers from 25 years before it to 75 years after it, also as in RiskSystem. A calendar without holidays (the default one, or one with only its weekend declared) covers every date.
 
 ### The Default Calendar
 
@@ -123,7 +146,7 @@ PS> Get-WorkdayCalendar ./holidays/br.txt
 
 Name Weekend          MinDate    MaxDate    Holidays Path
 ---- -------          -------    -------    -------- ----
-br   Saturday, Sunday 2001-01-01 2099-12-31     1263 /srv/holidays/br.txt
+br   Saturday, Sunday 2001-01-01 2100-01-01     1264 /srv/holidays/br.txt
 ```
 
 ## Commands
@@ -142,7 +165,7 @@ br   Saturday, Sunday 2001-01-01 2099-12-31     1263 /srv/holidays/br.txt
 | `Get-WorkdayDelta` | The number of workdays between two dates |
 | `Get-FirstWorkdayInMonth` | The first workday of the month |
 | `Get-LastWorkdayInMonth` | The last workday of the month |
-| `Get-NthWorkdayInMonth` | The Nth workday of the month, from its start or, when negative, from its end |
+| `Get-NthWorkdayInMonth` | The Nth workday of the month, from its start or, when negative, from its end; the last (first) one when the month has fewer |
 | `Get-Workday` | The workdays between two dates |
 | `New-WorkdayCalendar` | A calendar from a file, a list of dates, or both |
 | `Get-WorkdayCalendar` | The default calendar, or the one given |
@@ -197,6 +220,8 @@ The module is meant to be the calendar engine of other scripts and modules, whic
 | on the day after a workday | `Test-PreviousDayIsWorkday -Date $day -Calendar $calendars` |
 | on the Nth workday of the month | `(Get-NthWorkdayInMonth $n -Date $day -Calendar $calendars) -eq $day` |
 
+A job set for the 22nd workday of the month runs on the last one in a month that has only 20, as in RiskSystem; the position goes from 1 to 31, or from -1 to -31 counting from the end.
+
 ## Correspondence with the RiskSystem Calendar
 
 The results are those of the `Calendar` class of Elekto's RiskSystem:
@@ -210,10 +235,11 @@ The results are those of the `Calendar` class of Elekto's RiskSystem:
 | `AddActualDays` with `FinalDateAdjust` | `Add-CalendarDay -Adjust` (adds `Preceding` and `ModifiedPreceding`) |
 | `GetDeltaWorkDays` with `DeltaTerminalDayAdjust` | `Get-WorkdayDelta -Mode` |
 | `GetWorkingMonthHead`, `GetWorkingMonthTail` | `Get-FirstWorkdayInMonth`, `Get-LastWorkdayInMonth` |
+| `GetNthWorkingDay`, `GetNthToLastWorkingDay` | `Get-NthWorkdayInMonth`, with a negative position for the latter |
 | `GetWorkDates` with `Full` | `Get-Workday` |
 | `UnionWith` | Several calendars in `-Calendar` |
 
-One difference: a RiskSystem calendar covers from its first to its last holiday, while here it covers their whole years.
+Two differences, both about coverage: a calendar without holidays covers every date here, while RiskSystem limits it to 25 years before today and 75 after; and several calendars combined cover only the period they all cover, while `UnionWith` covers from the first holiday of any of them to the last.
 
 ## Development
 

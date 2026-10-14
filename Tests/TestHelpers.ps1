@@ -61,12 +61,27 @@ function Get-BrazilianHoliday {
 # module is checked against.
 
 function New-OracleCalendar {
-    param([datetime[]]$Holidays, [DayOfWeek[]]$Weekend, [datetime]$MinDate, [datetime]$MaxDate)
+    param([datetime[]]$Holidays, [DayOfWeek[]]$Weekend)
 
     $holidaySet = [System.Collections.Generic.HashSet[datetime]]::new()
     foreach ($holiday in $Holidays) { [void]$holidaySet.Add($holiday.Date) }
     $weekendSet = [System.Collections.Generic.HashSet[DayOfWeek]]::new()
     foreach ($day in $Weekend) { [void]$weekendSet.Add($day) }
+
+    # The range, as the constructor computes it
+    $sorted = @($holidaySet | Sort-Object)
+    if ($sorted.Count -eq 0) {
+        $MinDate = [datetime]::Today.AddYears(-25)
+        $MaxDate = [datetime]::Today.AddYears(75)
+    }
+    elseif ($sorted.Count -eq 1) {
+        $MinDate = $sorted[0].AddYears(-25)
+        $MaxDate = $sorted[0].AddYears(75)
+    }
+    else {
+        $MinDate = $sorted[0]
+        $MaxDate = $sorted[-1]
+    }
 
     $size = ($MaxDate - $MinDate).Days + 1
     $period = [int[]]::new($size)
@@ -193,13 +208,26 @@ function Get-OracleDelta($Oracle, [datetime]$Ini, [datetime]$End, [string]$Adjus
 }
 
 function Get-OracleWorkdayInMonth($Oracle, [datetime]$Date, [int]$Nth) {
-    # The Nth workday of the month by its definition: list them and pick
+    # GetNthWorkingDay for Nth > 0 and GetNthToLastWorkingDay for Nth < 0, over GetWorkingMonthHead
+    # and GetWorkingMonthTail; the months are compared as RiskSystem's serial months
     $first = [datetime]::new($Date.Year, $Date.Month, 1)
-    $workdays = @(for ($day = $first; $day.Month -eq $first.Month; $day = $day.AddDays(1)) {
-            if (Test-OracleWorkday $Oracle $day) { $day }
-        })
-    $index = if ($Nth -gt 0) { $Nth - 1 } else { $workdays.Count + $Nth }
-    if ($index -ge 0 -and $index -lt $workdays.Count) { $workdays[$index] }
+    $head = { Get-OracleNextOrSameWorkday $Oracle $first }
+    $tail = { Get-OraclePreviousOrSameWorkday $Oracle $first.AddMonths(1).AddDays(-1) }
+    $serialMonth = { param($d) $d.Year * 12 + $d.Month - 1 }
+
+    if ($Nth -gt 0) {
+        $day = & $head
+        if ($Nth -le 1) { return $day }
+        $candidate = Add-OracleWorkday $Oracle $day ($Nth - 1)
+        if ((& $serialMonth $day) -ne (& $serialMonth $candidate)) { return & $tail }
+        return $candidate
+    }
+
+    $day = & $tail
+    if (-$Nth -le 1) { return $day }
+    $candidate = Add-OracleWorkday $Oracle $day ($Nth + 1)
+    if ((& $serialMonth $day) -ne (& $serialMonth $candidate)) { return & $head }
+    $candidate
 }
 
 function Invoke-Safely([scriptblock]$Script) {

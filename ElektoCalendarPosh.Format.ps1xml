@@ -19,7 +19,7 @@
           <TableRowEntry>
             <TableColumnItems>
               <TableColumnItem><PropertyName>Name</PropertyName></TableColumnItem>
-              <TableColumnItem><ScriptBlock>$_.Weekend -join ', '</ScriptBlock></TableColumnItem>
+              <TableColumnItem><ScriptBlock>if ($_.Weekend.Count -gt 0) { $_.Weekend -join ', ' } else { 'NoWeekend' }</ScriptBlock></TableColumnItem>
               <TableColumnItem><ScriptBlock>if ($null -ne $_.MinDate) { $_.MinDate.ToString('yyyy-MM-dd', [cultureinfo]::InvariantCulture) }</ScriptBlock></TableColumnItem>
               <TableColumnItem><ScriptBlock>if ($null -ne $_.MaxDate) { $_.MaxDate.ToString('yyyy-MM-dd', [cultureinfo]::InvariantCulture) }</ScriptBlock></TableColumnItem>
               <TableColumnItem><ScriptBlock>$_.Holidays.Count</ScriptBlock></TableColumnItem>

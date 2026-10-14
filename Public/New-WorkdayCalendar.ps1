@@ -11,16 +11,23 @@ adjustments (another name, another weekend, extra holidays) or when there is no 
 The holiday file is plain text, UTF-8:
 
     # Comments start with '#'. Blank lines are ignored.
-    # Optional: the non-working weekdays, by English name. Saturday and Sunday when omitted.
+    # Optional, before the first holiday: the non-working weekdays, by English name.
+    # Saturday and Sunday when omitted.
     Saturday Sunday
 
     # One holiday per line, as yyyy-MM-dd; the rest of the line is a free description.
     2026-01-01  New Year's Day
     2026-11-20  Black Consciousness Day
+    2026-12-25  Christmas Day
+    2027-01-01  New Year's Day
 
-A calendar with holidays covers the whole years they span, and asking about a date outside them is
-an error: a file that lacks next year's holidays must not treat them as workdays. A calendar without
-holidays covers every date.
+Instead of weekday names, the word NoWeekend, as the first line that is not a comment, makes every
+day of the week a workday: only the holidays are not.
+
+As in RiskSystem, a calendar covers from its first holiday to its last, and asking about a date
+outside them is an error: a file that lacks next year's holidays must not treat them as workdays.
+Listing the next January 1st, as above, covers the end of the year. A single holiday covers from 25
+years before it to 75 years after it, and a calendar without holidays covers every date.
 
 .PARAMETER Path
 The holiday file. Relative paths are relative to the current location.
@@ -78,7 +85,7 @@ function New-WorkdayCalendar {
         if ($Path) {
             $parsed = Read-CalendarFile (Get-FullPath $Path)
             $holidays.AddRange($parsed.Holidays)
-            if ($parsed.Weekend.Count -gt 0) { $weekendDays = $parsed.Weekend }
+            if ($parsed.WeekendDeclared) { $weekendDays = $parsed.Weekend }
             if (-not $Name) { $Name = $parsed.Name }
             $source = $parsed.Path
         }

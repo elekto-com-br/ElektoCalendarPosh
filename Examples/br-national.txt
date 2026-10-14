@@ -4,6 +4,9 @@
 # fixed national holidays, Black Consciousness Day from 2024 on, and the Carnival Monday and
 # Tuesday, Good Friday and Corpus Christi, which follow Easter. Future laws may change future
 # years. Check it against the official list (ANBIMA) before relying on it.
+#
+# A calendar covers from its first holiday to its last: New Year's Day of 2100, at the end,
+# extends this one to the end of 2099.
 
 Saturday Sunday
 
@@ -1369,3 +1372,5 @@ Saturday Sunday
 2099-11-15  Proclamation of the Republic
 2099-11-20  Black Consciousness Day
 2099-12-25  Christmas Day
+
+2100-01-01  New Year's Day

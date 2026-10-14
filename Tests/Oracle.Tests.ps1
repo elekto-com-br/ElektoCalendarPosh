@@ -1,6 +1,6 @@
 # Random cases against a literal port of RiskSystem's Calendar class (see TestHelpers.ps1), in calendars
 # with odd weekends, random holidays and long closures. Both sides must give the same answer, or both
-# must fail because the answer is outside the calendar.
+# must fail because the answer is outside the calendar, which covers from its first holiday to its last.
 
 BeforeDiscovery {
     $weekends = @(
@@ -34,7 +34,7 @@ Describe 'Agreement with RiskSystem, weekend <Label>' -ForEach $weekends {
         }
 
         $calendar = New-WorkdayCalendar -Holiday $holidays -Weekend $Weekend -Name random
-        $oracle = New-OracleCalendar -Holidays $holidays -Weekend $Weekend -MinDate $minDate -MaxDate $maxDate
+        $oracle = New-OracleCalendar -Holidays $holidays -Weekend $Weekend
 
         # Dates anywhere in the calendar, edges included; some answers fall outside it on purpose
         $cases = for ($i = 0; $i -lt 60; $i++) {
@@ -46,8 +46,10 @@ Describe 'Agreement with RiskSystem, weekend <Label>' -ForEach $weekends {
                 Offset = $random.Next(-60, 61)
             }
         }
-        $cases = @($cases) + [pscustomobject]@{ Date = $minDate; Other = $maxDate; Days = 1; Offset = -1 } +
-        [pscustomobject]@{ Date = $maxDate; Other = $minDate; Days = -1; Offset = 1 }
+        # And the edges of the calendar: its first and last holidays
+        $cases = @($cases) + [pscustomobject]@{ Date = $calendar.MinDate; Other = $calendar.MaxDate; Days = 1; Offset = -1 } +
+        [pscustomobject]@{ Date = $calendar.MaxDate; Other = $calendar.MinDate; Days = -1; Offset = 1 } +
+        [pscustomobject]@{ Date = $calendar.MaxDate.AddDays(-3); Other = $calendar.MaxDate.AddDays(1); Days = 2; Offset = 3 }
 
         function Find-Mismatch([scriptblock]$Expected, [scriptblock]$Actual, [string]$Label) {
             $want = Invoke-Safely $Expected
@@ -114,7 +116,7 @@ Describe 'Agreement with RiskSystem, weekend <Label>' -ForEach $weekends {
             $d = $case.Date
             Find-Mismatch { Get-OracleWorkdayInMonth $oracle $d 1 } { Get-FirstWorkdayInMonth $d -Calendar $calendar } "Get-FirstWorkdayInMonth $d"
             Find-Mismatch { Get-OracleWorkdayInMonth $oracle $d -1 } { Get-LastWorkdayInMonth $d -Calendar $calendar } "Get-LastWorkdayInMonth $d"
-            foreach ($nth in 2, 5, 12, 23, -2, -9, -23) {
+            foreach ($nth in 2, 5, 12, 23, 31, -2, -9, -23, -31) {
                 Find-Mismatch { Get-OracleWorkdayInMonth $oracle $d $nth } { Get-NthWorkdayInMonth $nth $d -Calendar $calendar } "Get-NthWorkdayInMonth $nth $d"
             }
         }

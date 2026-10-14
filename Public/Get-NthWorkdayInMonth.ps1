@@ -4,11 +4,12 @@ Returns the Nth workday of a month, counting from its start or from its end.
 
 .DESCRIPTION
 1 is the first workday of the month, 2 the second, and so on; -1 is the last workday, -2 the second
-to last. Returns nothing when the month has fewer workdays than asked for, so that comparing the
-result with a date is simply false.
+to last. When the month has fewer workdays than asked for, the result is its last workday (its
+first, counting from the end), as in RiskSystem: a task set for the 22nd workday of the month still
+runs, on the last one, in a month that has only 20.
 
 .PARAMETER Nth
-The position: 1 to 31 from the start of the month, -1 to -31 from its end.
+The position: 1 to 31 from the start of the month, -1 to -31 from its end; 0 is not accepted.
 
 .PARAMETER Date
 Any date in the month; the current month when omitted. Accepts pipeline input, also from a property
@@ -28,6 +29,11 @@ Get-NthWorkdayInMonth 5 -Date 2026-11-01 -Calendar ./holidays/br.txt
 Get-NthWorkdayInMonth -2 -Date 2026-11-01 -Calendar ./holidays/br.txt
 
 2026-11-27, the second to last workday of November 2026.
+
+.EXAMPLE
+Get-NthWorkdayInMonth 25 -Date 2026-11-01 -Calendar ./holidays/br.txt
+
+2026-11-30: November 2026 has only 19 workdays, so its last one stands for the 25th.
 
 .EXAMPLE
 if ((Get-NthWorkdayInMonth 3) -eq [datetime]::Today) { ./Send-MonthlyReport.ps1 }

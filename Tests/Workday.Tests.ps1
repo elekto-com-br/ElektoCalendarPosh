@@ -150,7 +150,7 @@ Describe 'Add-Workday' {
 
     It 'jumps over a long closure' {
         $closure = 0..20 | ForEach-Object { ([datetime]'2026-07-01').AddDays($_) }
-        $calendar = New-WorkdayCalendar -Holiday $closure
+        $calendar = New-WorkdayCalendar -Holiday ($closure + [datetime]'2026-01-01' + [datetime]'2027-01-01')
         Add-Workday 1 2026-06-30 -Calendar $calendar | Should -Be ([datetime]'2026-07-22')
         Add-Workday -1 2026-07-22 -Calendar $calendar | Should -Be ([datetime]'2026-06-30')
     }
@@ -242,8 +242,7 @@ Describe 'Get-WorkdayDelta' {
     }
 
     It 'counts a whole century at once' {
-        $oracle = New-OracleCalendar -Holidays (Get-WorkdayCalendar $br).Holidays -Weekend Saturday, Sunday `
-            -MinDate 2001-01-01 -MaxDate 2099-12-31
+        $oracle = New-OracleCalendar -Holidays (Get-WorkdayCalendar $br).Holidays -Weekend Saturday, Sunday
         Get-WorkdayDelta 2001-01-01 2099-12-31 -Mode Full -Calendar $br |
             Should -Be (Get-OracleDelta $oracle ([datetime]'2001-01-01') ([datetime]'2099-12-31') 'Full')
     }
@@ -296,14 +295,21 @@ Describe 'Month boundaries' {
         Get-NthWorkdayInMonth -6 2012-11-13 -Calendar $bmf | Should -Be ([datetime]'2012-11-23')
     }
 
-    It 'returns nothing when the month has fewer workdays' {
-        Get-NthWorkdayInMonth 20 -Date 2026-11-15 -Calendar $br | Should -BeNullOrEmpty
-        Get-NthWorkdayInMonth -20 -Date 2026-11-15 -Calendar $br | Should -BeNullOrEmpty
-        (Get-NthWorkdayInMonth 20 -Date 2026-11-15 -Calendar $br) -eq [datetime]'2026-11-30' | Should -BeFalse
+    It 'stops at the last workday when the month has fewer, as RiskSystem: <Nth> gives <Expected>' -ForEach @(
+        @{ Nth = 20; Expected = '2026-11-30' }   # November 2026 has 19 workdays
+        @{ Nth = 31; Expected = '2026-11-30' }
+        @{ Nth = -20; Expected = '2026-11-03' }  # from the end, the first one
+        @{ Nth = -31; Expected = '2026-11-03' }
+    ) {
+        Get-NthWorkdayInMonth $Nth -Date 2026-11-15 -Calendar $br | Should -Be ([datetime]$Expected)
     }
 
-    It 'refuses position 0' {
-        { Get-NthWorkdayInMonth 0 -Calendar $br } | Should -Throw -ExpectedMessage '*cannot be 0*'
+    It 'refuses position <Nth>' -ForEach @(
+        @{ Nth = 0; Expected = '*cannot be 0*' }
+        @{ Nth = 32; Expected = '*maximum allowed range of 31*' }
+        @{ Nth = -32; Expected = '*minimum allowed range of -31*' }
+    ) {
+        { Get-NthWorkdayInMonth $Nth -Calendar $br } | Should -Throw -ExpectedMessage $Expected
     }
 }
 
@@ -328,6 +334,13 @@ Describe 'Get-Workday' {
 }
 
 Describe 'Example calendar' {
+
+    It 'covers 2001 to 2099, thanks to New Year''s Day of 2100' {
+        $calendar = Get-WorkdayCalendar $br
+        $calendar.MinDate | Should -Be ([datetime]'2001-01-01')
+        $calendar.MaxDate | Should -Be ([datetime]'2100-01-01')
+        Get-LastWorkdayInMonth 2099-12-01 -Calendar $br | Should -Be ([datetime]'2099-12-31')
+    }
 
     It 'has the Brazilian national holidays of 2026' {
         $holidays = (Get-WorkdayCalendar $br).Holidays | Where-Object Year -EQ 2026

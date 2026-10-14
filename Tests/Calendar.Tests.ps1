@@ -43,6 +43,36 @@ Describe 'Holiday file' {
         (New-WorkdayCalendar $path).Weekend | Should -Be @([DayOfWeek]::Saturday, [DayOfWeek]::Sunday)
     }
 
+    It 'makes every day of the week a workday with NoWeekend <Label>' -ForEach @(
+        @{ Label = 'on the first line'; Content = "NoWeekend`n2026-01-01`n2026-12-25" }
+        @{ Label = 'after comments, in any case'; Content = "# open every day`n`nnoweekend  # no days off`n2026-01-01`n2026-12-25" }
+    ) {
+        $path = New-TestCalendarFile 'always.txt' $Content
+        $calendar = New-WorkdayCalendar $path
+        $calendar.Weekend | Should -BeNullOrEmpty
+        $calendar | Out-String | Should -BeLike '*always*NoWeekend*2026-01-01*2026-12-25*'
+        Test-Workday 2026-11-21 -Calendar $path | Should -BeTrue   # a Saturday
+        Test-Workday 2026-12-25 -Calendar $path | Should -BeFalse
+    }
+
+    It 'lets -Weekend replace NoWeekend' {
+        $path = New-TestCalendarFile 'always.txt' "NoWeekend`n2026-12-25"
+        (New-WorkdayCalendar $path -Weekend Sunday).Weekend | Should -Be @([DayOfWeek]::Sunday)
+    }
+
+    It 'rejects <Label>' -ForEach @(
+        @{ Label = 'weekday names after a holiday'; Content = "2026-11-02`nSaturday"; Expected = '*Line 2 *must come before the first holiday*' }
+        @{ Label = 'NoWeekend after a holiday'; Content = "2026-11-02`nNoWeekend"; Expected = '*Line 2 *NoWeekend must be the first line*' }
+        @{ Label = 'NoWeekend after weekday names'; Content = "Sunday`nNoWeekend"; Expected = '*Line 2 *NoWeekend must be the first line*' }
+        @{ Label = 'weekday names after NoWeekend'; Content = "NoWeekend`nSaturday"; Expected = '*Line 2 *cannot follow NoWeekend*' }
+        @{ Label = 'NoWeekend with weekday names'; Content = "NoWeekend Saturday`n2026-11-02"; Expected = '*Line 1 *neither a date*' }
+    ) {
+        $path = New-TestCalendarFile 'misplaced.txt' $Content
+        $failure = { New-WorkdayCalendar $path } | Should -Throw -PassThru
+        $failure.FullyQualifiedErrorId | Should -BeLike 'InvalidCalendarLine*'
+        $failure.Exception.Message | Should -BeLike $Expected
+    }
+
     It 'reads a file with a byte order mark' {
         $path = Join-Path $TestDrive 'bom.txt'
         [IO.File]::WriteAllText($path, "Saturday Sunday`n2026-11-20  Feriado da Consci`u{00EA}ncia Negra", [Text.UTF8Encoding]::new($true))
@@ -101,31 +131,44 @@ Describe 'Holiday file' {
 Describe 'Coverage' {
 
     BeforeAll {
-        $script:coveragePath = New-TestCalendarFile 'coverage.txt' "2025-06-01`n2027-03-01"
+        $script:coveragePath = New-TestCalendarFile 'coverage.txt' "2025-06-02`n2027-03-01"
     }
 
-    It 'spans the whole years of the holidays' {
+    It 'goes from the first holiday to the last' {
         $calendar = Get-WorkdayCalendar $coveragePath
-        $calendar.MinDate | Should -Be ([datetime]'2025-01-01')
-        $calendar.MaxDate | Should -Be ([datetime]'2027-12-31')
-        Test-Workday 2025-01-01 -Calendar $coveragePath | Should -BeTrue
-        Test-Workday 2027-12-31 -Calendar $coveragePath | Should -BeTrue
+        $calendar.MinDate | Should -Be ([datetime]'2025-06-02')
+        $calendar.MaxDate | Should -Be ([datetime]'2027-03-01')
+        Test-Workday 2025-06-02 -Calendar $coveragePath | Should -BeFalse
+        Test-Workday 2025-06-03 -Calendar $coveragePath | Should -BeTrue
+        Test-Workday 2027-03-01 -Calendar $coveragePath | Should -BeFalse
     }
 
     It 'refuses a date <Label>' -ForEach @(
-        @{ Label = 'after the last year'; Date = '2028-01-03' }
-        @{ Label = 'before the first year'; Date = '2024-12-31' }
+        @{ Label = 'after the last holiday'; Date = '2027-03-02'; Advice = 'after 2027-03-01' }
+        @{ Label = 'before the first holiday'; Date = '2025-05-30'; Advice = 'before 2025-06-02' }
     ) {
         $failure = { Test-Workday $Date -Calendar $coveragePath } | Should -Throw -PassThru
         $failure.Exception | Should -BeOfType [ArgumentOutOfRangeException]
         $failure.FullyQualifiedErrorId | Should -BeLike 'DateOutsideCalendar*'
-        $failure.Exception.Message | Should -BeLike "*covers 2025-01-01 to 2027-12-31*$Date*coverage.txt*"
+        $failure.Exception.Message | Should -BeLike "*covers 2025-06-02 to 2027-03-01*$Date*holidays $Advice to*coverage.txt*"
     }
 
     It 'refuses an answer that needs a day beyond it' {
-        { Get-NextWorkday 2027-12-31 -Calendar $coveragePath } | Should -Throw -ExpectedMessage '*2028-01-01*'
-        { Add-Workday 10 2027-12-25 -Calendar $coveragePath } | Should -Throw -ExpectedMessage '*cannot tell*'
-        { Get-WorkdayDelta 2027-12-01 2028-01-10 -Calendar $coveragePath } | Should -Throw -ExpectedMessage '*cannot tell*'
+        { Get-NextWorkday 2027-03-01 -Calendar $coveragePath } | Should -Throw -ExpectedMessage '*2027-03-02*'
+        { Add-Workday 10 2027-02-25 -Calendar $coveragePath } | Should -Throw -ExpectedMessage '*cannot tell*'
+        { Get-WorkdayDelta 2027-02-01 2027-03-10 -Calendar $coveragePath } | Should -Throw -ExpectedMessage '*cannot tell*'
+    }
+
+    It 'reaches the end of a year with the next January 1st' {
+        $path = New-TestCalendarFile 'to-year-end.txt' "2026-11-20`n2026-12-25`n2027-01-01"
+        Test-Workday 2026-12-31 -Calendar $path | Should -BeTrue
+        Get-LastWorkdayInMonth 2026-12-01 -Calendar $path | Should -Be ([datetime]'2026-12-31')
+    }
+
+    It 'spans 25 years before a single holiday and 75 after it' {
+        $calendar = New-WorkdayCalendar -Holiday 2026-11-20
+        $calendar.MinDate | Should -Be ([datetime]'2001-11-20')
+        $calendar.MaxDate | Should -Be ([datetime]'2101-11-20')
     }
 
     It 'has no limit without holidays' {
@@ -206,8 +249,8 @@ Describe 'Default calendar' {
 Describe 'Calendar parameter' {
 
     BeforeAll {
-        $script:brPath = New-TestCalendarFile 'param-br.txt' "2026-11-02`n2026-11-20"
-        $script:usPath = New-TestCalendarFile 'param-us.txt' "2026-11-11`n2026-11-26"
+        $script:brPath = New-TestCalendarFile 'param-br.txt' "2026-01-01`n2026-11-02`n2026-11-20`n2027-01-01"
+        $script:usPath = New-TestCalendarFile 'param-us.txt' "2026-01-01`n2026-11-11`n2026-11-26`n2027-01-01"
     }
 
     It 'accepts <Label>' -ForEach @(
@@ -222,7 +265,7 @@ Describe 'Calendar parameter' {
     It 'combines several calendars: a day is a workday only if it is one in all of them' {
         $joint = Get-WorkdayCalendar $brPath, $usPath
         $joint.Name | Should -Be 'param-br+param-us'
-        $joint.Holidays.Count | Should -Be 4
+        $joint.Holidays.Count | Should -Be 6
         Test-Workday 2026-11-19 -Calendar $brPath, $usPath | Should -BeTrue
         Test-Workday 2026-11-20 -Calendar $brPath, $usPath | Should -BeFalse
         Test-Workday 2026-11-26 -Calendar $brPath, $usPath | Should -BeFalse
@@ -251,11 +294,11 @@ Describe 'Calendar parameter' {
         $longer = New-WorkdayCalendar -Holiday 2020-01-01, 2030-12-25
         $joint = Get-WorkdayCalendar $brPath, $longer, (New-WorkdayCalendar)
         $joint.MinDate | Should -Be ([datetime]'2026-01-01')
-        $joint.MaxDate | Should -Be ([datetime]'2026-12-31')
+        $joint.MaxDate | Should -Be ([datetime]'2027-01-01')
     }
 
     It 'refuses calendars with no period in common' {
-        $other = New-WorkdayCalendar -Holiday 2030-01-01
+        $other = New-WorkdayCalendar -Holiday 2030-01-01, 2030-12-25
         $failure = { Get-WorkdayCalendar $brPath, $other } | Should -Throw -PassThru
         $failure.FullyQualifiedErrorId | Should -BeLike 'NoCommonPeriod*'
     }
@@ -272,7 +315,8 @@ Describe 'New-WorkdayCalendar' {
         $calendar = New-WorkdayCalendar -Holiday 2026-11-20, 2026-11-02
         $calendar.Name | Should -Be 'Custom'
         $calendar.Holidays | Should -Be @([datetime]'2026-11-02', [datetime]'2026-11-20')
-        $calendar.MinDate | Should -Be ([datetime]'2026-01-01')
+        $calendar.MinDate | Should -Be ([datetime]'2026-11-02')
+        $calendar.MaxDate | Should -Be ([datetime]'2026-11-20')
         $calendar.Path | Should -BeNullOrEmpty
     }
 
@@ -301,8 +345,8 @@ Describe 'New-WorkdayCalendar' {
     }
 
     It 'shows its calendars as a table with ISO dates' {
-        $text = New-WorkdayCalendar -Holiday 2026-11-20 -Name custom | Out-String
+        $text = New-WorkdayCalendar -Holiday 2026-01-01, 2026-11-20 -Name custom | Out-String
         $text | Should -BeLike '*Name*Weekend*MinDate*MaxDate*Holidays*Path*'
-        $text | Should -BeLike '*custom*Saturday, Sunday*2026-01-01*2026-12-31*1*'
+        $text | Should -BeLike '*custom*Saturday, Sunday*2026-01-01*2026-11-20*2*'
     }
 }

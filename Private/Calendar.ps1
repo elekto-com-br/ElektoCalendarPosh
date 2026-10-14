@@ -1,9 +1,10 @@
 # Calendar core: building calendars and the day arithmetic every public function relies on.
 #
 # A calendar is a plain object (PSTypeName ElektoCalendarPosh.Calendar) holding the non-working
-# weekdays and the holidays. A calendar with holidays covers only the whole years they span: asking
-# about a date outside them is an error, so that a file missing next year's holidays never silently
-# treats them as workdays. A calendar without holidays covers every date.
+# weekdays and the holidays. As in RiskSystem, a calendar covers from its first holiday to its last:
+# asking about a date outside them is an error, so that a file missing next year's holidays never
+# silently treats them as workdays. A single holiday covers from 25 years before it to 75 years after
+# it, also as in RiskSystem; a calendar without holidays covers every date.
 #
 # Counting never walks day by day: whole weeks are counted arithmetically and the holidays that fall
 # on working weekdays are found by binary search, so the cost does not grow with the distance between
@@ -45,7 +46,7 @@ function New-CalendarObject {
         [string]$Path,
         [datetime[]]$Holidays = @(),
         [DayOfWeek[]]$Weekend = $script:DefaultWeekend,
-        # Coverage; computed from the holidays (whole years) unless given
+        # Coverage; computed from the holidays unless given
         [Nullable[datetime]]$MinDate,
         [Nullable[datetime]]$MaxDate
     )
@@ -70,9 +71,15 @@ function New-CalendarObject {
         if (-not $isWeekend[[int]$holiday.DayOfWeek]) { $workingHolidays.Add($holiday) }
     }
 
-    if (-not $PSBoundParameters.ContainsKey('MinDate') -and $sortedHolidays.Count -gt 0) {
-        $MinDate = [datetime]::new($sortedHolidays[0].Year, 1, 1)
-        $MaxDate = [datetime]::new($sortedHolidays[-1].Year, 12, 31)
+    if (-not $PSBoundParameters.ContainsKey('MinDate')) {
+        if ($sortedHolidays.Count -eq 1) {
+            $MinDate = $sortedHolidays[0].AddYears(-25)
+            $MaxDate = $sortedHolidays[0].AddYears(75)
+        }
+        elseif ($sortedHolidays.Count -gt 1) {
+            $MinDate = $sortedHolidays[0]
+            $MaxDate = $sortedHolidays[-1]
+        }
     }
 
     [pscustomobject]@{
@@ -91,9 +98,10 @@ function New-CalendarObject {
 }
 
 function Read-CalendarFile([string]$Path) {
-    # Reads a holiday file: one yyyy-MM-dd date per line, the rest of the line free; lines made only of
-    # weekday names declare the non-working weekdays; '#' starts a comment. Returns the holidays and
-    # the declared weekend (empty when the file declares none). The parse is cached by path.
+    # Reads a holiday file: one yyyy-MM-dd date per line, the rest of the line free; '#' starts a
+    # comment. Before the first holiday, lines of weekday names declare the non-working weekdays, or
+    # NoWeekend, as the first line that is not a comment, declares that there are none. Returns the
+    # holidays and the weekend, if declared. The parse is cached by path.
     $file = [IO.FileInfo]::new($Path)
     if (-not $file.Exists) {
         throw (New-CalendarError "Calendar file '$Path' not found." 'CalendarFileNotFound' ObjectNotFound $Path `
@@ -108,12 +116,15 @@ function Read-CalendarFile([string]$Path) {
 
     $holidays = [System.Collections.Generic.List[datetime]]::new()
     $weekend = [System.Collections.Generic.List[DayOfWeek]]::new()
+    $noWeekend = $false
     $lineNumber = 0
+    $contentLines = 0
     # All lines at once: a lazy reader left open by an error would keep the file locked on Windows
     foreach ($line in [IO.File]::ReadAllLines($file.FullName)) {
         $lineNumber++
         $content = $line.Trim()
         if ($content.Length -eq 0 -or $content[0] -eq '#') { continue }
+        $contentLines++
 
         # A date line, by far the most common, is told by its first ten characters and what follows them
         $date = [datetime]::MinValue
@@ -126,22 +137,30 @@ function Read-CalendarFile([string]$Path) {
         }
 
         $tokens = ($content -replace '#.*$', '').Trim() -split '[\s,]+'
-        if (@($tokens | Where-Object { $_ -notin $script:WeekdayNames }).Count -eq 0) {
-            foreach ($token in $tokens) { $weekend.Add([DayOfWeek]$token) }
-        }
-        else {
-            throw (New-CalendarError "Line $lineNumber of '$($file.FullName)' is neither a date (yyyy-MM-dd) nor a list of weekday names: '$line'." `
+        $isNoWeekend = $tokens.Count -eq 1 -and $tokens[0] -eq 'NoWeekend'
+        $isWeekdays = @($tokens | Where-Object { $_ -notin $script:WeekdayNames }).Count -eq 0
+        $problem = $null
+        if ($isNoWeekend -and $contentLines -gt 1) { $problem = 'NoWeekend must be the first line that is not a comment' }
+        elseif ($isNoWeekend) { $noWeekend = $true }
+        elseif ($isWeekdays -and $noWeekend) { $problem = 'weekday names cannot follow NoWeekend' }
+        elseif ($isWeekdays -and $holidays.Count -gt 0) { $problem = 'the non-working weekdays must come before the first holiday' }
+        elseif ($isWeekdays) { foreach ($token in $tokens) { $weekend.Add([DayOfWeek]$token) } }
+        else { $problem = 'this is neither a date (yyyy-MM-dd), nor weekday names, nor NoWeekend' }
+
+        if ($problem) {
+            throw (New-CalendarError "Line $lineNumber of '$($file.FullName)': $problem. Found '$line'." `
                     'InvalidCalendarLine' InvalidData $line ([FormatException]))
         }
     }
 
     $parsed = [pscustomobject]@{
-        Stamp    = $stamp
-        Path     = $file.FullName
-        Name     = [IO.Path]::GetFileNameWithoutExtension($file.Name)
-        Holidays = $holidays.ToArray()
-        Weekend  = $weekend.ToArray()
-        Calendar = $null  # the calendar of the file as it is, built on first use
+        Stamp           = $stamp
+        Path            = $file.FullName
+        Name            = [IO.Path]::GetFileNameWithoutExtension($file.Name)
+        Holidays        = $holidays.ToArray()
+        Weekend         = $weekend.ToArray()
+        WeekendDeclared = $noWeekend -or $weekend.Count -gt 0
+        Calendar        = $null  # the calendar of the file as it is, built on first use
     }
     $script:FileCache[$file.FullName] = $parsed
     $parsed
@@ -151,7 +170,7 @@ function Import-CalendarFile([string]$Path) {
     # The calendar of a holiday file, built once for each version of the file
     $parsed = Read-CalendarFile $Path
     if (-not $parsed.Calendar) {
-        $weekend = if ($parsed.Weekend.Count -gt 0) { $parsed.Weekend } else { $script:DefaultWeekend }
+        $weekend = if ($parsed.WeekendDeclared) { $parsed.Weekend } else { $script:DefaultWeekend }
         $parsed.Calendar = New-CalendarObject -Name $parsed.Name -Path $parsed.Path -Holidays $parsed.Holidays -Weekend $weekend
     }
     $parsed.Calendar
@@ -227,7 +246,14 @@ function Assert-CalendarCoverage($Calendar, [datetime]$Date) {
 
     $template = "Calendar '{0}' covers {1:yyyy-MM-dd} to {2:yyyy-MM-dd} and cannot tell whether {3:yyyy-MM-dd} is a workday."
     $message = $template -f $Calendar.Name, $Calendar.MinDate, $Calendar.MaxDate, $Date
-    if ($Calendar.Path) { $message += " Add the holidays of $($Date.Year) to '$($Calendar.Path)'." }
+    if ($Calendar.Path) {
+        $message += if ($Date -gt $Calendar.MaxDate) {
+            " Add the holidays after {0:yyyy-MM-dd} to '{1}'." -f $Calendar.MaxDate, $Calendar.Path
+        }
+        else {
+            " Add the holidays before {0:yyyy-MM-dd} to '{1}'." -f $Calendar.MinDate, $Calendar.Path
+        }
+    }
     throw (New-CalendarError $message 'DateOutsideCalendar' InvalidArgument $Date ([ArgumentOutOfRangeException]))
 }
 
@@ -377,15 +403,25 @@ function Get-AdjustedDate($Calendar, [datetime]$Date, [string]$Adjust) {
 }
 
 function Get-NthCalendarWorkdayInMonth($Calendar, [datetime]$Date, [int]$Nth) {
-    # The Nth workday of Date's month, counting from its last one when Nth is negative; nothing when
-    # the month has fewer workdays than that
+    # The Nth workday of Date's month, counting from its last one when Nth is negative. A month with
+    # fewer workdays gives its last one (its first, from the end), so that a task meant for the end of
+    # the month still runs. As RiskSystem's GetNthWorkingDay and GetNthToLastWorkingDay, and with
+    # GetWorkingMonthHead and GetWorkingMonthTail for 1 and -1.
     $first = [datetime]::new($Date.Year, $Date.Month, 1)
     $last = $first.AddMonths(1).AddDays(-1)
-    $workdays = @(for ($day = $first; $day -le $last; $day = $day.AddDays(1)) {
-            if (Test-CalendarDay $Calendar $day) { $day }
-        })
-    $index = if ($Nth -gt 0) { $Nth - 1 } else { $workdays.Count + $Nth }
-    if ($index -ge 0 -and $index -lt $workdays.Count) { $workdays[$index] }
+    if ($Nth -gt 0) {
+        $head = Find-Workday $Calendar $first 1 -OrSame
+        if ($Nth -eq 1) { return $head }
+        $candidate = Add-CalendarWorkday $Calendar $head ($Nth - 1)
+        if ($candidate -gt $last) { return Find-Workday $Calendar $last -1 -OrSame }
+        return $candidate
+    }
+
+    $tail = Find-Workday $Calendar $last -1 -OrSame
+    if ($Nth -eq -1) { return $tail }
+    $candidate = Add-CalendarWorkday $Calendar $tail ($Nth + 1)
+    if ($candidate -lt $first) { return Find-Workday $Calendar $first 1 -OrSame }
+    $candidate
 }
 
 $script:WeekendsOnly = New-CalendarObject -Name 'Weekends'

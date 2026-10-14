@@ -75,7 +75,7 @@ Saturday Sunday
 - The weekday names come before the first holiday. They can share a line or take one each, and are case-insensitive.
 - Any other line is an error that names the file and the line: a typo never silently drops a holiday.
 - The calendar is named after the file (`br` for `br.txt`).
-- A file is read once and read again only when it changes, so long-running scripts and schedulers can pass the path on every call and still pick up a new version of the file.
+- A file is parsed once and again only when its content changes (each use compares a hash of it, not the write time), so long-running scripts and schedulers can pass the path on every call and still pick up a new version of the file at once.
 
 #### Every Day a Workday: `NoWeekend`
 
@@ -122,6 +122,8 @@ The environment variable configures every script on a machine, or in a CI/CD pip
 ```powershell
 $env:WORKDAY_CALENDAR = '/srv/holidays/br.txt'
 ```
+
+Prefer an absolute path. A relative one is taken from the current location when the module first reads the variable, and stays the same file after a `Set-Location`, as with `Set-WorkdayCalendar`.
 
 ### The `-Calendar` Parameter
 
@@ -178,6 +180,28 @@ Import-Csv trades.csv | Add-Workday 2     # the D+2 of each trade, from its Date
 ```
 
 Every command has full help: `Get-Help Add-Workday -Full`.
+
+### Dates and Timestamps
+
+The commands work with dates. A `DateTime` keeps its own date, whatever its time and its kind (local, UTC). A string goes through PowerShell's usual conversion to `DateTime` first, and that conversion turns a timestamp with a time zone into local time: on a machine in UTC-3, `'2026-01-03T01:00:00Z'` arrives as January 2nd, 22:00, a Friday. To get the same answer on every machine, pass the date you mean:
+
+```powershell
+Test-Workday '2026-01-03'                                 # the date itself
+Test-Workday ([datetimeoffset]$timestamp).Date            # the date as written in the timestamp
+Test-Workday ([datetimeoffset]$timestamp).UtcDateTime     # the date in UTC
+```
+
+## Errors
+
+A calendar that cannot be built (a missing file, a malformed line) stops the command. So does, by default, an error about a date: one the calendar does not cover (`DateOutsideCalendar`), a month without any workday (`NoWorkdayInMonth`), or an answer beyond the dates .NET represents (`DateOutOfRange`). That way a date the calendar cannot answer for never silently drops out of a list.
+
+With `-ErrorAction`, an error about a date follows the action chosen instead, as usual in PowerShell:
+
+```powershell
+$dates | Add-Workday 2 -ErrorAction SilentlyContinue -ErrorVariable problems   # skips them, keeps the errors
+```
+
+The errors are `ErrorRecord`s with those ids (`$_.FullyQualifiedErrorId`) and a matching .NET exception (`ArgumentOutOfRangeException`, `InvalidOperationException`, `FormatException`, `FileNotFoundException`), so scripts can tell them apart.
 
 ## Counting Workdays
 

@@ -60,6 +60,6 @@ function Get-Workday {
         }
     }
     catch {
-        $PSCmdlet.ThrowTerminatingError($_)
+        $PSCmdlet.ThrowTerminatingError((ConvertTo-CalendarErrorRecord $_))
     }
 }

@@ -123,8 +123,34 @@ Describe 'Holiday file' {
         Test-Workday 2026-11-19 -Calendar $path | Should -BeTrue
 
         [IO.File]::WriteAllText($path, "2026-11-19`n2026-11-20")
-        (Get-Item $path).LastWriteTimeUtc = [datetime]::UtcNow.AddMinutes(1)
         Test-Workday 2026-11-19 -Calendar $path | Should -BeFalse
+    }
+
+    It 'sees a rewrite that keeps the size and the write time' {
+        $path = New-TestCalendarFile 'same-stamp.txt' "2026-01-01  A`n2026-06-01  B`n"
+        Test-Workday 2026-06-01 -Calendar $path | Should -BeFalse
+        $stamp = (Get-Item $path).LastWriteTimeUtc
+
+        [IO.File]::WriteAllText($path, "2026-01-01  A`n2026-06-02  C`n")
+        (Get-Item $path).LastWriteTimeUtc = $stamp
+        Test-Workday 2026-06-01 -Calendar $path | Should -BeTrue
+        Test-Workday 2026-06-02 -Calendar $path | Should -BeFalse
+    }
+
+    It 'keeps the cache of files bounded' {
+        foreach ($i in 1..80) { $null = Get-WorkdayCalendar (New-TestCalendarFile "many/$i.txt" '2026-11-20') }
+        InModuleScope ElektoCalendarPosh { $script:FileCache.Count } | Should -BeLessOrEqual 64
+    }
+
+    It 'escapes and shortens the rejected line in the message' {
+        $line = '2026-11-20' + [char]0x1B + ']0;title' + [char]7 + ('x' * 200)
+        $path = New-TestCalendarFile 'escapes.txt' "2026-11-02`n$line"
+        $failure = { New-WorkdayCalendar $path } | Should -Throw -PassThru
+        $failure.Exception.Message | Should -Not -Match '[\x00-\x1F\x7F]'
+        $failure.Exception.Message | Should -Match ([regex]::Escape('2026-11-20\u001B]0;title\u0007xxx'))
+        $failure.Exception.Message | Should -Match "\.\.\.'\.$"
+        $failure.Exception.Message.Length | Should -BeLessThan 400
+        $failure.TargetObject | Should -Not -Match '[\x00-\x1F\x7F]'
     }
 }
 
@@ -202,6 +228,19 @@ Describe 'Default calendar' {
         $env:WORKDAY_CALENDAR = New-TestCalendarFile 'env.txt' '2026-11-20'
         Test-Workday 2026-11-20 | Should -BeFalse
         (Get-WorkdayCalendar).Name | Should -Be 'env'
+    }
+
+    It 'keeps a relative path in WORKDAY_CALENDAR pointing to the same file after a change of location' {
+        New-TestCalendarFile 'env-relative/h.txt' "2026-01-01`n2026-11-20`n2027-01-01" | Out-Null
+        Push-Location (Join-Path $TestDrive 'env-relative')
+        try {
+            $env:WORKDAY_CALENDAR = './h.txt'
+            Test-Workday 2026-11-20 | Should -BeFalse
+        }
+        finally {
+            Pop-Location
+        }
+        Test-Workday 2026-11-20 | Should -BeFalse
     }
 
     It 'combines the files in WORKDAY_CALENDAR' {

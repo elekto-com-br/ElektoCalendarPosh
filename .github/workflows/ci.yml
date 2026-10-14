@@ -5,6 +5,9 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   build:
     name: Build & Test (${{ matrix.os }})
@@ -15,14 +18,19 @@ jobs:
         os: [ubuntu-latest, windows-latest]
 
     steps:
-      - uses: actions/checkout@v7
+      # Actions are pinned by commit, tools by exact version: nothing new runs here unreviewed
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Install Pester and PSScriptAnalyzer
         shell: pwsh
-        run: Install-PSResource -Name Pester, PSScriptAnalyzer -Repository PSGallery -TrustRepository -Quiet
+        run: |
+          Install-PSResource -Name Pester -Version '[6.2.0]' -Repository PSGallery -TrustRepository -Quiet
+          Install-PSResource -Name PSScriptAnalyzer -Version '[1.25.0]' -Repository PSGallery -TrustRepository -Quiet
 
-      # Parses every script, validates the manifest, runs PSScriptAnalyzer, imports the module,
-      # runs the Pester tests and stages ./out/ElektoCalendarPosh.
+      # Parses every script, validates the manifest, runs PSScriptAnalyzer and the Pester tests,
+      # stages ./out/ElektoCalendarPosh and imports it.
       - name: Build and test
         shell: pwsh
         run: ./Build.ps1

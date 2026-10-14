@@ -48,6 +48,11 @@ Add-CalendarDay 0 -Date 2026-11-01 -Adjust Preceding -Calendar ./holidays/br.txt
 
 2026-10-30: moves a Sunday back to the previous workday.
 
+.NOTES
+An error about a date (one the calendar does not cover, for instance) stops the command. With
+-ErrorAction, it follows the action chosen instead: -ErrorAction SilentlyContinue skips that date and
+goes on with the next ones, and -ErrorVariable collects the errors.
+
 .OUTPUTS
 System.DateTime
 #>
@@ -73,7 +78,15 @@ function Add-CalendarDay {
     }
 
     process {
-        try { Get-AdjustedDate $resolved (ConvertTo-CalendarDate $Date).AddDays($Days) $Adjust }
-        catch { $PSCmdlet.ThrowTerminatingError($_) }
+        # The result is checked first, when it is to be adjusted: one outside the calendar is then
+        # reported without an exception. Without adjustment the calendar is not consulted.
+        $problem = $null
+        try {
+            $day = (ConvertTo-CalendarDate $Date).AddDays($Days)
+            if ($Adjust -ne 'None') { $problem = Get-CalendarCoverageError $resolved $day }
+            if (-not $problem) { Get-AdjustedDate $resolved $day $Adjust }
+        }
+        catch { $problem = $_ }
+        if ($problem) { Write-CalendarError $PSCmdlet $problem }
     }
 }

@@ -208,26 +208,22 @@ function Get-OracleDelta($Oracle, [datetime]$Ini, [datetime]$End, [string]$Adjus
 }
 
 function Get-OracleWorkdayInMonth($Oracle, [datetime]$Date, [int]$Nth) {
-    # GetNthWorkingDay for Nth > 0 and GetNthToLastWorkingDay for Nth < 0, over GetWorkingMonthHead
-    # and GetWorkingMonthTail; the months are compared as RiskSystem's serial months
+    # The Nth workday of the month by its definition, walking the month from the side Nth counts
+    # from: the last one found when the month has fewer (as RiskSystem's GetNthWorkingDay and
+    # GetNthToLastWorkingDay), and an error when it has none (RiskSystem would answer with a day of
+    # another month)
     $first = [datetime]::new($Date.Year, $Date.Month, 1)
-    $head = { Get-OracleNextOrSameWorkday $Oracle $first }
-    $tail = { Get-OraclePreviousOrSameWorkday $Oracle $first.AddMonths(1).AddDays(-1) }
-    $serialMonth = { param($d) $d.Year * 12 + $d.Month - 1 }
-
-    if ($Nth -gt 0) {
-        $day = & $head
-        if ($Nth -le 1) { return $day }
-        $candidate = Add-OracleWorkday $Oracle $day ($Nth - 1)
-        if ((& $serialMonth $day) -ne (& $serialMonth $candidate)) { return & $tail }
-        return $candidate
+    $days = @(for ($day = $first; $day.Month -eq $first.Month; $day = $day.AddDays(1)) { $day })
+    if ($Nth -lt 0) { [array]::Reverse($days) }
+    $found = @()
+    foreach ($day in $days) {
+        if (Test-OracleWorkday $Oracle $day) {
+            $found += $day
+            if ($found.Count -eq [Math]::Abs($Nth)) { break }
+        }
     }
-
-    $day = & $tail
-    if (-$Nth -le 1) { return $day }
-    $candidate = Add-OracleWorkday $Oracle $day ($Nth + 1)
-    if ((& $serialMonth $day) -ne (& $serialMonth $candidate)) { return & $head }
-    $candidate
+    if ($found.Count -eq 0) { throw "No workday in $($first.ToString('yyyy-MM'))" }
+    $found[-1]
 }
 
 function Invoke-Safely([scriptblock]$Script) {

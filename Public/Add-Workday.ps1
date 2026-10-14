@@ -39,6 +39,11 @@ Import-Csv trades.csv | Add-Workday 2
 
 The settlement date (D+2) of each trade, taken from the Date column.
 
+.NOTES
+An error about a date (one the calendar does not cover, for instance) stops the command. With
+-ErrorAction, it follows the action chosen instead: -ErrorAction SilentlyContinue skips that date and
+goes on with the next ones, and -ErrorVariable collects the errors.
+
 .OUTPUTS
 System.DateTime
 #>
@@ -61,7 +66,15 @@ function Add-Workday {
     }
 
     process {
-        try { Add-CalendarWorkday $resolved (ConvertTo-CalendarDate $Date) $Days }
-        catch { $PSCmdlet.ThrowTerminatingError($_) }
+        # The date is checked first: a date outside the calendar is then reported without an exception.
+        # Not with 0 days, which gives the date back without consulting the calendar.
+        $problem = $null
+        try {
+            $day = ConvertTo-CalendarDate $Date
+            if ($Days -ne 0) { $problem = Get-CalendarCoverageError $resolved $day }
+            if (-not $problem) { Add-CalendarWorkday $resolved $day $Days }
+        }
+        catch { $problem = $_ }
+        if ($problem) { Write-CalendarError $PSCmdlet $problem }
     }
 }

@@ -25,6 +25,11 @@ Get-FirstWorkdayInMonth -Date (Get-Date).AddMonths(1)
 
 The first workday of next month.
 
+.NOTES
+An error about a date (one the calendar does not cover, for instance) stops the command. With
+-ErrorAction, it follows the action chosen instead: -ErrorAction SilentlyContinue skips that date and
+goes on with the next ones, and -ErrorVariable collects the errors.
+
 .OUTPUTS
 System.DateTime
 #>
@@ -44,7 +49,15 @@ function Get-FirstWorkdayInMonth {
     }
 
     process {
-        try { Get-NthCalendarWorkdayInMonth $resolved (ConvertTo-CalendarDate $Date) 1 }
-        catch { $PSCmdlet.ThrowTerminatingError($_) }
+        # The first day of the month is checked first: one outside the calendar is then reported
+        # without an exception
+        $problem = $null
+        try {
+            $day = ConvertTo-CalendarDate $Date
+            $problem = Get-CalendarCoverageError $resolved ([datetime]::new($day.Year, $day.Month, 1))
+            if (-not $problem) { Get-NthCalendarWorkdayInMonth $resolved $day 1 }
+        }
+        catch { $problem = $_ }
+        if ($problem) { Write-CalendarError $PSCmdlet $problem }
     }
 }

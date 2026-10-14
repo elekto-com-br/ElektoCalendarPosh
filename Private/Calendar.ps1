@@ -14,18 +14,45 @@
 $script:WeekdayNames = [Enum]::GetNames([DayOfWeek])
 $script:DefaultWeekend = [DayOfWeek[]]@('Saturday', 'Sunday')
 
-# Parsed holiday files, by full path, reused while the file keeps its size and write time
+# Parsed holiday files, by full path, reused while the file keeps the same content; a process that
+# goes through many files starts over at FileCacheLimit of them, so the cache never grows unbounded
 $script:FileCache = [System.Collections.Generic.Dictionary[string, object]]::new([StringComparer]::Ordinal)
+$script:FileCacheLimit = 64
 
 # What Set-WorkdayCalendar stored: calendar objects and/or file paths, resolved on every use
 $script:DefaultCalendar = $null
 
+# The paths in WORKDAY_CALENDAR, made absolute when the module first sees the variable's value, so
+# that a later Set-Location does not change the calendar (as with Set-WorkdayCalendar)
+$script:EnvironmentCalendar = @{ Value = $null; Paths = @() }
+
 # The last joint calendar, reused while the same calendars are combined, as in a loop over dates
 $script:LastJoint = $null
+
+# The ids of the errors the module raises itself
+$script:ErrorIds = @('CalendarFileNotFound', 'InvalidCalendarLine', 'NoWorkingWeekday', 'NoCommonPeriod', 'InvalidCalendar',
+    'DateOutsideCalendar', 'DateOutOfRange', 'NoWorkdayInMonth')
 
 function ConvertTo-CalendarDate([datetime]$Date) {
     # Calendars work with dates only: midnight, and no time zone kind
     [datetime]::SpecifyKind($Date.Date, [DateTimeKind]::Unspecified)
+}
+
+function Format-CalendarText([string]$Text, [int]$MaxLength = [int]::MaxValue) {
+    # Text that came from a file, a file name or the caller, made safe to print in a message: control
+    # and formatting characters (terminal escapes, bidirectional overrides) are escaped as \uXXXX, and
+    # anything past MaxLength is cut
+    $builder = [Text.StringBuilder]::new()
+    foreach ($char in $Text.ToCharArray()) {
+        if ($builder.Length -ge $MaxLength) { [void]$builder.Append('...'); break }
+        if ([char]::IsControl($char) -or [Globalization.CharUnicodeInfo]::GetUnicodeCategory($char) -eq 'Format') {
+            [void]$builder.AppendFormat('\u{0:X4}', [int]$char)
+        }
+        else {
+            [void]$builder.Append($char)
+        }
+    }
+    $builder.ToString()
 }
 
 function New-CalendarError {
@@ -37,6 +64,35 @@ function New-CalendarError {
 
     $exception = $ExceptionType::new($Message, [Exception]$null)
     [Management.Automation.ErrorRecord]::new($exception, $Id, $Category, $Target)
+}
+
+function ConvertTo-CalendarErrorRecord([Management.Automation.ErrorRecord]$ErrorRecord) {
+    # The module's own errors pass unchanged; date arithmetic beyond what .NET represents (years 1 to
+    # 9999, or a number of days too large) becomes DateOutOfRange instead of a .NET method error
+    if (($ErrorRecord.FullyQualifiedErrorId -split ',')[0] -in $script:ErrorIds) { return $ErrorRecord }
+
+    $exception = $ErrorRecord.Exception
+    while ($exception -is [Management.Automation.MethodInvocationException] -and $exception.InnerException) {
+        $exception = $exception.InnerException
+    }
+    if ($exception -is [ArgumentOutOfRangeException] -or $exception -is [OverflowException]) {
+        return New-CalendarError 'The answer falls outside the dates that can be represented, from 0001-01-01 to 9999-12-31.' `
+            'DateOutOfRange' InvalidArgument $ErrorRecord.TargetObject ([ArgumentOutOfRangeException])
+    }
+    $ErrorRecord
+}
+
+function Write-CalendarError($Cmdlet, [Management.Automation.ErrorRecord]$ErrorRecord) {
+    # An error about one date stops the command: the safe default, so that a date the calendar cannot
+    # answer for never silently drops out of a list. When the caller passed -ErrorAction, it is an
+    # ordinary error instead, under the action chosen: Stop still stops, SilentlyContinue skips the date.
+    #
+    # The commands check the dates they need with Get-CalendarCoverageError before working, so that
+    # the usual error reaches here without an exception: PowerShell also records, in the caller's
+    # -ErrorVariable, every exception caught inside a command, once per function it crossed.
+    $record = ConvertTo-CalendarErrorRecord $ErrorRecord
+    if ($Cmdlet.MyInvocation.BoundParameters.ContainsKey('ErrorAction')) { $Cmdlet.WriteError($record) }
+    else { $Cmdlet.ThrowTerminatingError($record) }
 }
 
 function New-CalendarObject {
@@ -56,7 +112,7 @@ function New-CalendarObject {
     foreach ($day in $Weekend) { $isWeekend[[int]$day] = $true }
     $workdaysPerWeek = @($isWeekend -eq $false).Count
     if ($workdaysPerWeek -eq 0) {
-        throw (New-CalendarError "Calendar '$Name' has no working weekday: at least one day of the week must be a workday." `
+        throw (New-CalendarError "Calendar '$(Format-CalendarText $Name)' has no working weekday: at least one day of the week must be a workday." `
                 'NoWorkingWeekday' InvalidArgument $Weekend)
     }
 
@@ -102,26 +158,32 @@ function Read-CalendarFile([string]$Path) {
     # Reads a holiday file: one yyyy-MM-dd date per line, the rest of the line free; '#' starts a
     # comment. Before the first holiday, lines of weekday names declare the non-working weekdays, or
     # NoWeekend, as the first line that is not a comment, declares that there are none. Returns the
-    # holidays and the weekend, if declared. The parse is cached by path.
+    # holidays and the weekend, if declared. The parse is cached by path and content.
     $file = [IO.FileInfo]::new($Path)
     if (-not $file.Exists) {
-        throw (New-CalendarError "Calendar file '$Path' not found." 'CalendarFileNotFound' ObjectNotFound $Path `
+        throw (New-CalendarError "Calendar file '$(Format-CalendarText $Path)' not found." 'CalendarFileNotFound' ObjectNotFound $Path `
                 ([IO.FileNotFoundException]))
     }
 
-    $stamp = '{0}|{1}' -f $file.LastWriteTimeUtc.Ticks, $file.Length
+    # The content decides, not the write time: a rewrite that keeps the size and the time (a copy that
+    # preserves it, a coarse file system) must still be seen. Holiday files are small; hashing is cheap.
+    # All bytes at once, too: a lazy reader left open by an error would keep the file locked on Windows.
+    $bytes = [IO.File]::ReadAllBytes($file.FullName)
+    $hash = [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($bytes))
     $cached = $null
-    if ($script:FileCache.TryGetValue($file.FullName, [ref]$cached) -and $cached.Stamp -eq $stamp) {
+    if ($script:FileCache.TryGetValue($file.FullName, [ref]$cached) -and $cached.Hash -eq $hash) {
         return $cached
     }
+
+    $reader = [IO.StreamReader]::new([IO.MemoryStream]::new($bytes), [Text.UTF8Encoding]::new($false), $true)
+    try { $text = $reader.ReadToEnd() } finally { $reader.Dispose() }
 
     $holidays = [System.Collections.Generic.List[datetime]]::new()
     $weekend = [System.Collections.Generic.List[DayOfWeek]]::new()
     $noWeekend = $false
     $lineNumber = 0
     $contentLines = 0
-    # All lines at once: a lazy reader left open by an error would keep the file locked on Windows
-    foreach ($line in [IO.File]::ReadAllLines($file.FullName)) {
+    foreach ($line in $text -split '\r\n|\n|\r') {
         $lineNumber++
         $content = $line.Trim()
         if ($content.Length -eq 0 -or $content[0] -eq '#') { continue }
@@ -149,19 +211,24 @@ function Read-CalendarFile([string]$Path) {
         else { $problem = 'this is neither a date (yyyy-MM-dd), nor weekday names, nor NoWeekend' }
 
         if ($problem) {
-            throw (New-CalendarError "Line $lineNumber of '$($file.FullName)': $problem. Found '$line'." `
-                    'InvalidCalendarLine' InvalidData $line ([FormatException]))
+            # The line goes into the message escaped and cut short: the file may hold anything
+            $found = Format-CalendarText $line 80
+            throw (New-CalendarError "Line $lineNumber of '$(Format-CalendarText $file.FullName)': $problem. Found '$found'." `
+                    'InvalidCalendarLine' InvalidData $found ([FormatException]))
         }
     }
 
     $parsed = [pscustomobject]@{
-        Stamp           = $stamp
+        Hash            = $hash
         Path            = $file.FullName
         Name            = [IO.Path]::GetFileNameWithoutExtension($file.Name)
         Holidays        = $holidays.ToArray()
         Weekend         = $weekend.ToArray()
         WeekendDeclared = $noWeekend -or $weekend.Count -gt 0
         Calendar        = $null  # the calendar of the file as it is, built on first use
+    }
+    if ($script:FileCache.Count -ge $script:FileCacheLimit -and -not $script:FileCache.ContainsKey($file.FullName)) {
+        $script:FileCache.Clear()
     }
     $script:FileCache[$file.FullName] = $parsed
     $parsed
@@ -194,7 +261,7 @@ function Join-Calendar([object[]]$Calendars) {
         $minDate = ($bounded | ForEach-Object MinDate | Sort-Object)[-1]
         $maxDate = ($bounded | ForEach-Object MaxDate | Sort-Object)[0]
         if ($minDate -gt $maxDate) {
-            throw (New-CalendarError "Calendars '$($Calendars.Name -join "', '")' have no period in common." `
+            throw (New-CalendarError "Calendars '$(Format-CalendarText ($Calendars.Name -join "', '"))' have no period in common." `
                     'NoCommonPeriod' InvalidArgument $Calendars)
         }
     }
@@ -205,8 +272,13 @@ function Join-Calendar([object[]]$Calendars) {
 
 function Get-DefaultCalendar {
     if ($script:DefaultCalendar) { return Resolve-Calendar $script:DefaultCalendar }
-    $paths = @($env:WORKDAY_CALENDAR -split [IO.Path]::PathSeparator | Where-Object { $_.Trim() })
-    if ($paths.Count -gt 0) { return Resolve-Calendar $paths }
+
+    $value = $env:WORKDAY_CALENDAR
+    if ($value -cne $script:EnvironmentCalendar.Value) {
+        $paths = @($value -split [IO.Path]::PathSeparator | Where-Object { $_.Trim() } | ForEach-Object { Get-FullPath $_.Trim() })
+        $script:EnvironmentCalendar = @{ Value = $value; Paths = $paths }
+    }
+    if ($script:EnvironmentCalendar.Paths.Count -gt 0) { return Resolve-Calendar $script:EnvironmentCalendar.Paths }
     $script:WeekendsOnly
 }
 
@@ -222,7 +294,7 @@ function Resolve-Calendar([object[]]$Calendar) {
             elseif ($item -is [System.Management.Automation.PathInfo]) { Import-CalendarFile $item.ProviderPath }
             elseif ($item -is [string]) { Import-CalendarFile (Get-FullPath $item) }
             else {
-                throw (New-CalendarError "A calendar must be an object from New-WorkdayCalendar or the path of a holiday file, not '$item'." `
+                throw (New-CalendarError "A calendar must be an object from New-WorkdayCalendar or the path of a holiday file, not '$(Format-CalendarText "$item" 80)'." `
                         'InvalidCalendar' InvalidArgument $item)
             }
         })
@@ -242,20 +314,28 @@ function Resolve-Calendar([object[]]$Calendar) {
 }
 
 function Assert-CalendarCoverage($Calendar, [datetime]$Date) {
+    # On every day a computation touches, so the check that passes stays inline and cheap
+    if (($null -eq $Calendar.MinDate -or $Date -ge $Calendar.MinDate) -and
+        ($null -eq $Calendar.MaxDate -or $Date -le $Calendar.MaxDate)) { return }
+    throw (Get-CalendarCoverageError $Calendar $Date)
+}
+
+function Get-CalendarCoverageError($Calendar, [datetime]$Date) {
+    # The error for a date the calendar does not cover, or nothing when it does
     if (($null -eq $Calendar.MinDate -or $Date -ge $Calendar.MinDate) -and
         ($null -eq $Calendar.MaxDate -or $Date -le $Calendar.MaxDate)) { return }
 
     $template = "Calendar '{0}' covers {1:yyyy-MM-dd} to {2:yyyy-MM-dd} and cannot tell whether {3:yyyy-MM-dd} is a workday."
-    $message = $template -f $Calendar.Name, $Calendar.MinDate, $Calendar.MaxDate, $Date
+    $message = $template -f (Format-CalendarText $Calendar.Name), $Calendar.MinDate, $Calendar.MaxDate, $Date
     if ($Calendar.Path) {
         $message += if ($Date -gt $Calendar.MaxDate) {
-            " Add the holidays after {0:yyyy-MM-dd} to '{1}'." -f $Calendar.MaxDate, $Calendar.Path
+            " Add the holidays after {0:yyyy-MM-dd} to '{1}'." -f $Calendar.MaxDate, (Format-CalendarText $Calendar.Path)
         }
         else {
-            " Add the holidays before {0:yyyy-MM-dd} to '{1}'." -f $Calendar.MinDate, $Calendar.Path
+            " Add the holidays before {0:yyyy-MM-dd} to '{1}'." -f $Calendar.MinDate, (Format-CalendarText $Calendar.Path)
         }
     }
-    throw (New-CalendarError $message 'DateOutsideCalendar' InvalidArgument $Date ([ArgumentOutOfRangeException]))
+    New-CalendarError $message 'DateOutsideCalendar' InvalidArgument $Date ([ArgumentOutOfRangeException])
 }
 
 function Test-CalendarDay($Calendar, [datetime]$Date) {
@@ -297,11 +377,11 @@ function Measure-CalendarWorkday($Calendar, [datetime]$Start, [datetime]$End) {
     $count - (Measure-CalendarHoliday $Calendar $Start $End)
 }
 
-function Step-WorkingWeekday($Calendar, [datetime]$Date, [int]$Count) {
+function Step-WorkingWeekday($Calendar, [datetime]$Date, [long]$Count) {
     # The Count-th working weekday after Date (before it, when negative), ignoring holidays
     $direction = [Math]::Sign($Count)
     $left = [Math]::Abs($Count)
-    $weeks = [int][Math]::Floor(($left - 1) / $Calendar.WorkdaysPerWeek)
+    $weeks = [long][Math]::Floor(($left - 1) / $Calendar.WorkdaysPerWeek)
     $Date = $Date.AddDays(7 * $weeks * $direction)
     $left -= $weeks * $Calendar.WorkdaysPerWeek
     while ($left -gt 0) {
@@ -313,12 +393,17 @@ function Step-WorkingWeekday($Calendar, [datetime]$Date, [int]$Count) {
 
 function Add-CalendarWorkday($Calendar, [datetime]$Date, [int]$Days) {
     # The Days-th workday after Date (before it, when negative); Date itself when Days is 0, workday
-    # or not. As RiskSystem's Calendar.AddWorkDays.
+    # or not, without consulting the calendar, whose holidays could not change that answer. As
+    # RiskSystem's Calendar.AddWorkDays.
     if ($Days -eq 0) { return $Date }
     Assert-CalendarCoverage $Calendar $Date
 
     $direction = [Math]::Sign($Days)
-    $pending = [Math]::Abs($Days)
+    $pending = [Math]::Abs([long]$Days)
+    # More workdays than the calendar has days: the answer is beyond it, whatever its holidays
+    if ($null -ne $Calendar.MaxDate -and $pending -gt ($Calendar.MaxDate - $Calendar.MinDate).Days) {
+        Assert-CalendarCoverage $Calendar $(if ($direction -gt 0) { $Calendar.MaxDate.AddDays(1) } else { $Calendar.MinDate.AddDays(-1) })
+    }
     while ($pending -gt 0) {
         $target = Step-WorkingWeekday $Calendar $Date ($pending * $direction)
         Assert-CalendarCoverage $Calendar $target
@@ -406,23 +491,30 @@ function Get-AdjustedDate($Calendar, [datetime]$Date, [string]$Adjust) {
 function Get-NthCalendarWorkdayInMonth($Calendar, [datetime]$Date, [int]$Nth) {
     # The Nth workday of Date's month, counting from its last one when Nth is negative. A month with
     # fewer workdays gives its last one (its first, from the end), so that a task meant for the end of
-    # the month still runs. As RiskSystem's GetNthWorkingDay and GetNthToLastWorkingDay, and with
-    # GetWorkingMonthHead and GetWorkingMonthTail for 1 and -1.
+    # the month still runs: the results of RiskSystem's GetNthWorkingDay and GetNthToLastWorkingDay
+    # (and GetWorkingMonthHead and GetWorkingMonthTail for 1 and -1). The search never leaves the
+    # month, so it needs no coverage beyond it, and a month without any workday is an error: an answer
+    # from another month would mislead a comparison with a date of this one.
     $first = [datetime]::new($Date.Year, $Date.Month, 1)
     $last = $first.AddMonths(1).AddDays(-1)
-    if ($Nth -gt 0) {
-        $head = Find-Workday $Calendar $first 1 -OrSame
-        if ($Nth -eq 1) { return $head }
-        $candidate = Add-CalendarWorkday $Calendar $head ($Nth - 1)
-        if ($candidate -gt $last) { return Find-Workday $Calendar $last -1 -OrSame }
-        return $candidate
+    $day, $end, $step = if ($Nth -gt 0) { $first, $last, 1 } else { $last, $first, -1 }
+
+    $answer = $null
+    $found = 0
+    while ($true) {
+        if (Test-CalendarDay $Calendar $day) {
+            $answer = $day
+            if (++$found -eq [Math]::Abs($Nth)) { break }
+        }
+        if ($day -eq $end) { break }
+        $day = $day.AddDays($step)
     }
 
-    $tail = Find-Workday $Calendar $last -1 -OrSame
-    if ($Nth -eq -1) { return $tail }
-    $candidate = Add-CalendarWorkday $Calendar $tail ($Nth + 1)
-    if ($candidate -lt $first) { return Find-Workday $Calendar $first 1 -OrSame }
-    $candidate
+    if ($null -eq $answer) {
+        throw (New-CalendarError ("Calendar '{0}' has no workday in {1:yyyy-MM}." -f (Format-CalendarText $Calendar.Name), $first) `
+                'NoWorkdayInMonth' ObjectNotFound $first ([InvalidOperationException]))
+    }
+    $answer
 }
 
 $script:WeekendsOnly = New-CalendarObject -Name 'Weekends'

@@ -30,6 +30,11 @@ Sends the report only on workdays of the default calendar.
 
 True, False, False: a Thursday, a holiday and a Saturday.
 
+.NOTES
+An error about a date (one the calendar does not cover, for instance) stops the command. With
+-ErrorAction, it follows the action chosen instead: -ErrorAction SilentlyContinue skips that date and
+goes on with the next ones, and -ErrorVariable collects the errors.
+
 .OUTPUTS
 System.Boolean
 #>
@@ -49,7 +54,14 @@ function Test-Workday {
     }
 
     process {
-        try { Test-CalendarDay $resolved (ConvertTo-CalendarDate $Date) }
-        catch { $PSCmdlet.ThrowTerminatingError($_) }
+        # The date is checked first: a date outside the calendar is then reported without an exception
+        $problem = $null
+        try {
+            $day = ConvertTo-CalendarDate $Date
+            $problem = Get-CalendarCoverageError $resolved $day
+            if (-not $problem) { Test-CalendarDay $resolved $day }
+        }
+        catch { $problem = $_ }
+        if ($problem) { Write-CalendarError $PSCmdlet $problem }
     }
 }

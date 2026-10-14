@@ -311,6 +311,87 @@ Describe 'Month boundaries' {
     ) {
         { Get-NthWorkdayInMonth $Nth -Calendar $br } | Should -Throw -ExpectedMessage $Expected
     }
+
+    It 'refuses a month without workdays instead of answering with another month: <Command>' -ForEach @(
+        @{ Command = 'Get-FirstWorkdayInMonth'; Call = { Get-FirstWorkdayInMonth -Date 2026-02-15 -Calendar $closed } }
+        @{ Command = 'Get-LastWorkdayInMonth'; Call = { Get-LastWorkdayInMonth -Date 2026-02-15 -Calendar $closed } }
+        @{ Command = 'Get-NthWorkdayInMonth 5'; Call = { Get-NthWorkdayInMonth 5 -Date 2026-02-15 -Calendar $closed } }
+        @{ Command = 'Get-NthWorkdayInMonth -3'; Call = { Get-NthWorkdayInMonth -3 -Date 2026-02-15 -Calendar $closed } }
+    ) {
+        $february = 1..28 | ForEach-Object { [datetime]::new(2026, 2, $_) }
+        $closed = New-WorkdayCalendar -Holiday ($february + [datetime]'2026-01-01' + [datetime]'2026-03-31')
+        $failure = $Call | Should -Throw -PassThru
+        $failure.FullyQualifiedErrorId | Should -BeLike 'NoWorkdayInMonth*'
+        $failure.Exception.Message | Should -BeLike '*no workday in 2026-02*'
+        Get-FirstWorkdayInMonth -Date 2026-03-15 -Calendar $closed | Should -Be ([datetime]'2026-03-02')
+    }
+
+    It 'stays in the month near the end of the calendar' {
+        # December 2099 has 22 workdays and the example calendar ends on 2100-01-01
+        Get-NthWorkdayInMonth 31 -Date 2099-12-01 -Calendar $br | Should -Be ([datetime]'2099-12-31')
+    }
+}
+
+Describe 'Errors' {
+
+    It 'a date the calendar does not cover stops the pipeline by default' {
+        $calendar = New-WorkdayCalendar -Holiday 2026-01-01, 2026-03-31
+        { [datetime[]]('2026-01-05', '1990-01-01', '2026-01-06') | Test-Workday -Calendar $calendar } |
+            Should -Throw -ExpectedMessage '*cannot tell whether 1990-01-01*'
+    }
+
+    It 'with -ErrorAction SilentlyContinue, skips that date and goes on' {
+        $calendar = New-WorkdayCalendar -Holiday 2026-01-01, 2026-03-31
+        $errors = $null
+        $results = [datetime[]]('2026-01-05', '1990-01-01', '2026-01-06') |
+            Add-Workday 1 -Calendar $calendar -ErrorAction SilentlyContinue -ErrorVariable errors
+        $results | Should -Be @([datetime]'2026-01-06', [datetime]'2026-01-07')
+        $errors.Count | Should -Be 1
+        $errors[0].FullyQualifiedErrorId | Should -BeLike 'DateOutsideCalendar*'
+    }
+
+    It 'with -ErrorAction Stop, still stops' {
+        $calendar = New-WorkdayCalendar -Holiday 2026-01-01, 2026-03-31
+        $failure = { [datetime[]]('2026-01-05', '1990-01-01') | Get-NextWorkday -Calendar $calendar -ErrorAction Stop } |
+            Should -Throw -PassThru
+        $failure.FullyQualifiedErrorId | Should -BeLike 'DateOutsideCalendar*'
+    }
+
+    It 'a calendar that cannot be built stops even with -ErrorAction SilentlyContinue' {
+        { Test-Workday 2026-01-05 -Calendar (Join-Path $TestDrive 'missing.txt') -ErrorAction SilentlyContinue } |
+            Should -Throw -ExpectedMessage '*not found*'
+    }
+
+    It 'more workdays than the calendar has days is outside it' {
+        $failure = { Add-Workday ([int]::MinValue) 2026-06-15 -Calendar $br } | Should -Throw -PassThru
+        $failure.FullyQualifiedErrorId | Should -BeLike 'DateOutsideCalendar*'
+        $failure = { Add-Workday ([int]::MaxValue) 2026-06-15 -Calendar $br } | Should -Throw -PassThru
+        $failure.FullyQualifiedErrorId | Should -BeLike 'DateOutsideCalendar*'
+    }
+
+    It 'beyond the dates .NET represents is DateOutOfRange, not a .NET error: <Label>' -ForEach @(
+        @{ Label = 'Add-Workday [int]::MinValue'; Call = { Add-Workday ([int]::MinValue) 2026-06-15 -Calendar (New-WorkdayCalendar) } }
+        @{ Label = 'Add-Workday [int]::MaxValue'; Call = { Add-Workday ([int]::MaxValue) 2026-06-15 -Calendar (New-WorkdayCalendar) } }
+        @{ Label = 'Add-CalendarDay [int]::MaxValue'; Call = { Add-CalendarDay ([int]::MaxValue) 2026-06-15 -Calendar (New-WorkdayCalendar) } }
+        @{ Label = 'Get-NextWorkday 9999-12-31'; Call = { Get-NextWorkday 9999-12-31 -Calendar (New-WorkdayCalendar) } }
+        @{ Label = 'Test-NextDayIsWorkday 9999-12-31'; Call = { Test-NextDayIsWorkday 9999-12-31 -Calendar (New-WorkdayCalendar) } }
+        @{ Label = 'Get-LastWorkdayInMonth 9999-12'; Call = { Get-LastWorkdayInMonth 9999-12-15 -Calendar (New-WorkdayCalendar) } }
+    ) {
+        $failure = $Call | Should -Throw -PassThru
+        $failure.FullyQualifiedErrorId | Should -BeLike 'DateOutOfRange*'
+        $failure.Exception | Should -BeOfType [ArgumentOutOfRangeException]
+    }
+
+    It 'Add-Workday 0 returns the date without consulting the calendar' {
+        $calendar = New-WorkdayCalendar -Holiday 2026-01-01, 2026-03-31
+        Add-Workday 0 2020-01-04 -Calendar $calendar | Should -Be ([datetime]'2020-01-04')
+    }
+
+    It 'a DateTime keeps its own date, even a UTC one' {
+        $utc = [datetime]::SpecifyKind([datetime]'2026-01-03 01:00', 'Utc')   # Saturday in UTC
+        Test-Workday $utc -Calendar $br | Should -BeFalse
+        Get-NextOrSameWorkday $utc -Calendar $br | Should -Be ([datetime]'2026-01-05')
+    }
 }
 
 Describe 'Get-Workday' {

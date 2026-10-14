@@ -26,6 +26,11 @@ if (Test-PreviousDayIsWorkday) { ./Import-YesterdayTrades.ps1 }
 
 Imports yesterday's trades only when yesterday was a workday.
 
+.NOTES
+An error about a date (one the calendar does not cover, for instance) stops the command. With
+-ErrorAction, it follows the action chosen instead: -ErrorAction SilentlyContinue skips that date and
+goes on with the next ones, and -ErrorVariable collects the errors.
+
 .OUTPUTS
 System.Boolean
 #>
@@ -45,7 +50,14 @@ function Test-PreviousDayIsWorkday {
     }
 
     process {
-        try { Test-CalendarDay $resolved (ConvertTo-CalendarDate $Date).AddDays(-1) }
-        catch { $PSCmdlet.ThrowTerminatingError($_) }
+        # The day is checked first: a day outside the calendar is then reported without an exception
+        $problem = $null
+        try {
+            $day = (ConvertTo-CalendarDate $Date).AddDays(-1)
+            $problem = Get-CalendarCoverageError $resolved $day
+            if (-not $problem) { Test-CalendarDay $resolved $day }
+        }
+        catch { $problem = $_ }
+        if ($problem) { Write-CalendarError $PSCmdlet $problem }
     }
 }

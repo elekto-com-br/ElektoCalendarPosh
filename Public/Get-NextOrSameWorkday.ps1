@@ -24,6 +24,11 @@ Get-NextOrSameWorkday -Date 2026-11-19 -Calendar ./holidays/br.txt
 
 2026-11-19 itself, a working Thursday.
 
+.NOTES
+An error about a date (one the calendar does not cover, for instance) stops the command. With
+-ErrorAction, it follows the action chosen instead: -ErrorAction SilentlyContinue skips that date and
+goes on with the next ones, and -ErrorVariable collects the errors.
+
 .OUTPUTS
 System.DateTime
 #>
@@ -43,7 +48,14 @@ function Get-NextOrSameWorkday {
     }
 
     process {
-        try { Find-Workday $resolved (ConvertTo-CalendarDate $Date) 1 -OrSame }
-        catch { $PSCmdlet.ThrowTerminatingError($_) }
+        # The date is checked first: a date outside the calendar is then reported without an exception
+        $problem = $null
+        try {
+            $day = ConvertTo-CalendarDate $Date
+            $problem = Get-CalendarCoverageError $resolved $day
+            if (-not $problem) { Find-Workday $resolved $day 1 -OrSame }
+        }
+        catch { $problem = $_ }
+        if ($problem) { Write-CalendarError $PSCmdlet $problem }
     }
 }

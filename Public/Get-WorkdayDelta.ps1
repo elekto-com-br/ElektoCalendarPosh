@@ -54,6 +54,11 @@ Get-WorkdayDelta -Start 2026-11-16 -End 2026-11-24 -Mode Full -Calendar ./holida
 
 The workdays from today until each date.
 
+.NOTES
+An error about a date (one the calendar does not cover, for instance) stops the command. With
+-ErrorAction, it follows the action chosen instead: -ErrorAction SilentlyContinue skips that date and
+goes on with the next ones, and -ErrorVariable collects the errors.
+
 .OUTPUTS
 System.Int32
 #>
@@ -81,7 +86,18 @@ function Get-WorkdayDelta {
     }
 
     process {
-        try { Get-CalendarDelta $resolved (ConvertTo-CalendarDate $Start) (ConvertTo-CalendarDate $End) $Mode }
-        catch { $PSCmdlet.ThrowTerminatingError($_) }
+        # Both dates are checked first: one outside the calendar is then reported without an exception.
+        # Not for the same date twice, which counts 0 without consulting the calendar, except in Full.
+        $problem = $null
+        try {
+            $from = ConvertTo-CalendarDate $Start
+            $to = ConvertTo-CalendarDate $End
+            if ($from -ne $to -or $Mode -eq 'Full') {
+                $problem = (Get-CalendarCoverageError $resolved $from) ?? (Get-CalendarCoverageError $resolved $to)
+            }
+            if (-not $problem) { Get-CalendarDelta $resolved $from $to $Mode }
+        }
+        catch { $problem = $_ }
+        if ($problem) { Write-CalendarError $PSCmdlet $problem }
     }
 }

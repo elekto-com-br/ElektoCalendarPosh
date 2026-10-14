@@ -5,8 +5,8 @@ Returns the Nth workday of a month, counting from its start or from its end.
 .DESCRIPTION
 1 is the first workday of the month, 2 the second, and so on; -1 is the last workday, -2 the second
 to last. When the month has fewer workdays than asked for, the result is its last workday (its
-first, counting from the end), as in RiskSystem: a task set for the 22nd workday of the month still
-runs, on the last one, in a month that has only 20.
+first, counting from the end): a task set for the 22nd workday of the month still runs, on the last
+one, in a month that has only 20.
 
 .PARAMETER Nth
 The position: 1 to 31 from the start of the month, -1 to -31 from its end; 0 is not accepted.

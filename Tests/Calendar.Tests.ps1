@@ -165,10 +165,11 @@ Describe 'Coverage' {
         Get-LastWorkdayInMonth 2026-12-01 -Calendar $path | Should -Be ([datetime]'2026-12-31')
     }
 
-    It 'spans 25 years before a single holiday and 75 after it' {
+    It 'spans a year before a single holiday and a year after it' {
         $calendar = New-WorkdayCalendar -Holiday 2026-11-20
-        $calendar.MinDate | Should -Be ([datetime]'2001-11-20')
-        $calendar.MaxDate | Should -Be ([datetime]'2101-11-20')
+        $calendar.MinDate | Should -Be ([datetime]'2025-11-20')
+        $calendar.MaxDate | Should -Be ([datetime]'2027-11-20')
+        { Test-Workday 2027-11-22 -Calendar $calendar } | Should -Throw -ExpectedMessage '*cannot tell*'
     }
 
     It 'has no limit without holidays' {

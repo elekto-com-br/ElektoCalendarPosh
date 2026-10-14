@@ -90,7 +90,7 @@ PrivateData = @{
         ReleaseNotes = @'
 ## 0.1.0
 - Calendars from plain-text holiday files (ISO dates, optional non-working weekdays or NoWeekend), from lists of dates, or Saturday and Sunday only by default
-- As in RiskSystem, a calendar covers from its first holiday to its last
+- A calendar covers from its first holiday to its last
 - Default calendar from Set-WorkdayCalendar or the WORKDAY_CALENDAR environment variable
 - Joint calendars: a day is a workday only if it is a workday in all of them
 - Test-Workday, Test-NextDayIsWorkday, Test-PreviousDayIsWorkday

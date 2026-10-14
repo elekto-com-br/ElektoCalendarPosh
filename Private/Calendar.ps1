@@ -3,8 +3,9 @@
 # A calendar is a plain object (PSTypeName ElektoCalendarPosh.Calendar) holding the non-working
 # weekdays and the holidays. As in RiskSystem, a calendar covers from its first holiday to its last:
 # asking about a date outside them is an error, so that a file missing next year's holidays never
-# silently treats them as workdays. A single holiday covers from 25 years before it to 75 years after
-# it, also as in RiskSystem; a calendar without holidays covers every date.
+# silently treats them as workdays. A single holiday covers from a year before it to a year after it
+# (RiskSystem goes 25 years back and 75 ahead, more than a scripting tool needs); a calendar without
+# holidays covers every date.
 #
 # Counting never walks day by day: whole weeks are counted arithmetically and the holidays that fall
 # on working weekdays are found by binary search, so the cost does not grow with the distance between
@@ -73,8 +74,8 @@ function New-CalendarObject {
 
     if (-not $PSBoundParameters.ContainsKey('MinDate')) {
         if ($sortedHolidays.Count -eq 1) {
-            $MinDate = $sortedHolidays[0].AddYears(-25)
-            $MaxDate = $sortedHolidays[0].AddYears(75)
+            $MinDate = $sortedHolidays[0].AddYears(-1)
+            $MaxDate = $sortedHolidays[0].AddYears(1)
         }
         elseif ($sortedHolidays.Count -gt 1) {
             $MinDate = $sortedHolidays[0]

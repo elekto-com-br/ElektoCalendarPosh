@@ -97,7 +97,7 @@ A `.cal` file of [bizdays](https://github.com/wilsonfreitas/python-bizdays) is a
 
 ### Coverage
 
-As in RiskSystem, a calendar with holidays covers from its first holiday to its last. Asking about a date outside that period is an error (`ArgumentOutOfRangeException`, error id `DateOutsideCalendar`), because the calendar cannot know the holidays it does not list:
+A calendar with holidays covers from its first holiday to its last. Asking about a date outside that period is an error (`ArgumentOutOfRangeException`, error id `DateOutsideCalendar`), because the calendar cannot know the holidays it does not list:
 
 ```text
 PS> Test-Workday 2099-12-28 -Calendar /srv/holidays/br.txt
@@ -107,7 +107,7 @@ Add the holidays after 2099-12-25 to '/srv/holidays/br.txt'.
 
 To cover a year up to December 31st, list the next January 1st too, as the example above does with 2027-01-01, and as [Examples/br-national.txt](Examples/br-national.txt) does with 2100-01-01.
 
-A calendar with a single holiday covers from 25 years before it to 75 years after it, also as in RiskSystem. A calendar without holidays (the default one, or one with only its weekend declared) covers every date.
+A calendar with a single holiday covers from a year before it to a year after it. A calendar without holidays (the default one, or one with only its weekend declared) covers every date.
 
 ### The Default Calendar
 
@@ -220,26 +220,7 @@ The module is meant to be the calendar engine of other scripts and modules, whic
 | on the day after a workday | `Test-PreviousDayIsWorkday -Date $day -Calendar $calendars` |
 | on the Nth workday of the month | `(Get-NthWorkdayInMonth $n -Date $day -Calendar $calendars) -eq $day` |
 
-A job set for the 22nd workday of the month runs on the last one in a month that has only 20, as in RiskSystem; the position goes from 1 to 31, or from -1 to -31 counting from the end.
-
-## Correspondence with the RiskSystem Calendar
-
-The results are those of the `Calendar` class of Elekto's RiskSystem:
-
-| RiskSystem `ICalendar` | ElektoCalendarPosh |
-|------------------------|--------------------|
-| `IsWorkday` | `Test-Workday` |
-| `GetNextWorkday`, `GetNextOrSameWorkday` | `Get-NextWorkday`, `Get-NextOrSameWorkday` |
-| `GetPrevWorkday`, `GetPrevOrSameWorkday` | `Get-PreviousWorkday`, `Get-PreviousOrSameWorkday` |
-| `AddWorkDays` | `Add-Workday` |
-| `AddActualDays` with `FinalDateAdjust` | `Add-CalendarDay -Adjust` (adds `Preceding` and `ModifiedPreceding`) |
-| `GetDeltaWorkDays` with `DeltaTerminalDayAdjust` | `Get-WorkdayDelta -Mode` |
-| `GetWorkingMonthHead`, `GetWorkingMonthTail` | `Get-FirstWorkdayInMonth`, `Get-LastWorkdayInMonth` |
-| `GetNthWorkingDay`, `GetNthToLastWorkingDay` | `Get-NthWorkdayInMonth`, with a negative position for the latter |
-| `GetWorkDates` with `Full` | `Get-Workday` |
-| `UnionWith` | Several calendars in `-Calendar` |
-
-Two differences, both about coverage: a calendar without holidays covers every date here, while RiskSystem limits it to 25 years before today and 75 after; and several calendars combined cover only the period they all cover, while `UnionWith` covers from the first holiday of any of them to the last.
+A job set for the 22nd workday of the month runs on the last one in a month that has only 20; the position goes from 1 to 31, or from -1 to -31 counting from the end.
 
 ## Development
 

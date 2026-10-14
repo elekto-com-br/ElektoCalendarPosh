@@ -24,10 +24,10 @@ The holiday file is plain text, UTF-8:
 Instead of weekday names, the word NoWeekend, as the first line that is not a comment, makes every
 day of the week a workday: only the holidays are not.
 
-As in RiskSystem, a calendar covers from its first holiday to its last, and asking about a date
-outside them is an error: a file that lacks next year's holidays must not treat them as workdays.
-Listing the next January 1st, as above, covers the end of the year. A single holiday covers from 25
-years before it to 75 years after it, and a calendar without holidays covers every date.
+A calendar covers from its first holiday to its last, and asking about a date outside them is an
+error: a file that lacks next year's holidays must not treat them as workdays. Listing the next
+January 1st, as above, covers the end of the year. A single holiday covers from a year before it to
+a year after it, and a calendar without holidays covers every date.
 
 .PARAMETER Path
 The holiday file. Relative paths are relative to the current location.

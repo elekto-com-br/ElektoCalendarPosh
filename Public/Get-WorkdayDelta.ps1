@@ -20,8 +20,6 @@ Other modes:
 - StartAndEndExpanding: the start moves back and the end moves forward.
 - StartAndEndCollapsing: the start moves forward and the end moves back.
 
-The modes and their results are those of the RiskSystem calendar (DeltaTerminalDayAdjust).
-
 .PARAMETER Start
 The start date; the time of day is ignored. Today when omitted.
 

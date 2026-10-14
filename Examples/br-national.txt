@@ -1,0 +1,1371 @@
+# Brazil: national holidays observed by the financial system, 2001 to 2099.
+#
+# An example for ElektoCalendarPosh, generated from the holiday rules in force in 2026: the
+# fixed national holidays, Black Consciousness Day from 2024 on, and the Carnival Monday and
+# Tuesday, Good Friday and Corpus Christi, which follow Easter. Future laws may change future
+# years. Check it against the official list (ANBIMA) before relying on it.
+
+Saturday Sunday
+
+2001-01-01  New Year's Day
+2001-02-26  Carnival Monday
+2001-02-27  Carnival Tuesday
+2001-04-13  Good Friday
+2001-04-21  Tiradentes' Day
+2001-05-01  Labour Day
+2001-06-14  Corpus Christi
+2001-09-07  Independence Day
+2001-10-12  Our Lady of Aparecida
+2001-11-02  All Souls' Day
+2001-11-15  Proclamation of the Republic
+2001-12-25  Christmas Day
+
+2002-01-01  New Year's Day
+2002-02-11  Carnival Monday
+2002-02-12  Carnival Tuesday
+2002-03-29  Good Friday
+2002-04-21  Tiradentes' Day
+2002-05-01  Labour Day
+2002-05-30  Corpus Christi
+2002-09-07  Independence Day
+2002-10-12  Our Lady of Aparecida
+2002-11-02  All Souls' Day
+2002-11-15  Proclamation of the Republic
+2002-12-25  Christmas Day
+
+2003-01-01  New Year's Day
+2003-03-03  Carnival Monday
+2003-03-04  Carnival Tuesday
+2003-04-18  Good Friday
+2003-04-21  Tiradentes' Day
+2003-05-01  Labour Day
+2003-06-19  Corpus Christi
+2003-09-07  Independence Day
+2003-10-12  Our Lady of Aparecida
+2003-11-02  All Souls' Day
+2003-11-15  Proclamation of the Republic
+2003-12-25  Christmas Day
+
+2004-01-01  New Year's Day
+2004-02-23  Carnival Monday
+2004-02-24  Carnival Tuesday
+2004-04-09  Good Friday
+2004-04-21  Tiradentes' Day
+2004-05-01  Labour Day
+2004-06-10  Corpus Christi
+2004-09-07  Independence Day
+2004-10-12  Our Lady of Aparecida
+2004-11-02  All Souls' Day
+2004-11-15  Proclamation of the Republic
+2004-12-25  Christmas Day
+
+2005-01-01  New Year's Day
+2005-02-07  Carnival Monday
+2005-02-08  Carnival Tuesday
+2005-03-25  Good Friday
+2005-04-21  Tiradentes' Day
+2005-05-01  Labour Day
+2005-05-26  Corpus Christi
+2005-09-07  Independence Day
+2005-10-12  Our Lady of Aparecida
+2005-11-02  All Souls' Day
+2005-11-15  Proclamation of the Republic
+2005-12-25  Christmas Day
+
+2006-01-01  New Year's Day
+2006-02-27  Carnival Monday
+2006-02-28  Carnival Tuesday
+2006-04-14  Good Friday
+2006-04-21  Tiradentes' Day
+2006-05-01  Labour Day
+2006-06-15  Corpus Christi
+2006-09-07  Independence Day
+2006-10-12  Our Lady of Aparecida
+2006-11-02  All Souls' Day
+2006-11-15  Proclamation of the Republic
+2006-12-25  Christmas Day
+
+2007-01-01  New Year's Day
+2007-02-19  Carnival Monday
+2007-02-20  Carnival Tuesday
+2007-04-06  Good Friday
+2007-04-21  Tiradentes' Day
+2007-05-01  Labour Day
+2007-06-07  Corpus Christi
+2007-09-07  Independence Day
+2007-10-12  Our Lady of Aparecida
+2007-11-02  All Souls' Day
+2007-11-15  Proclamation of the Republic
+2007-12-25  Christmas Day
+
+2008-01-01  New Year's Day
+2008-02-04  Carnival Monday
+2008-02-05  Carnival Tuesday
+2008-03-21  Good Friday
+2008-04-21  Tiradentes' Day
+2008-05-01  Labour Day
+2008-05-22  Corpus Christi
+2008-09-07  Independence Day
+2008-10-12  Our Lady of Aparecida
+2008-11-02  All Souls' Day
+2008-11-15  Proclamation of the Republic
+2008-12-25  Christmas Day
+
+2009-01-01  New Year's Day
+2009-02-23  Carnival Monday
+2009-02-24  Carnival Tuesday
+2009-04-10  Good Friday
+2009-04-21  Tiradentes' Day
+2009-05-01  Labour Day
+2009-06-11  Corpus Christi
+2009-09-07  Independence Day
+2009-10-12  Our Lady of Aparecida
+2009-11-02  All Souls' Day
+2009-11-15  Proclamation of the Republic
+2009-12-25  Christmas Day
+
+2010-01-01  New Year's Day
+2010-02-15  Carnival Monday
+2010-02-16  Carnival Tuesday
+2010-04-02  Good Friday
+2010-04-21  Tiradentes' Day
+2010-05-01  Labour Day
+2010-06-03  Corpus Christi
+2010-09-07  Independence Day
+2010-10-12  Our Lady of Aparecida
+2010-11-02  All Souls' Day
+2010-11-15  Proclamation of the Republic
+2010-12-25  Christmas Day
+
+2011-01-01  New Year's Day
+2011-03-07  Carnival Monday
+2011-03-08  Carnival Tuesday
+2011-04-21  Tiradentes' Day
+2011-04-22  Good Friday
+2011-05-01  Labour Day
+2011-06-23  Corpus Christi
+2011-09-07  Independence Day
+2011-10-12  Our Lady of Aparecida
+2011-11-02  All Souls' Day
+2011-11-15  Proclamation of the Republic
+2011-12-25  Christmas Day
+
+2012-01-01  New Year's Day
+2012-02-20  Carnival Monday
+2012-02-21  Carnival Tuesday
+2012-04-06  Good Friday
+2012-04-21  Tiradentes' Day
+2012-05-01  Labour Day
+2012-06-07  Corpus Christi
+2012-09-07  Independence Day
+2012-10-12  Our Lady of Aparecida
+2012-11-02  All Souls' Day
+2012-11-15  Proclamation of the Republic
+2012-12-25  Christmas Day
+
+2013-01-01  New Year's Day
+2013-02-11  Carnival Monday
+2013-02-12  Carnival Tuesday
+2013-03-29  Good Friday
+2013-04-21  Tiradentes' Day
+2013-05-01  Labour Day
+2013-05-30  Corpus Christi
+2013-09-07  Independence Day
+2013-10-12  Our Lady of Aparecida
+2013-11-02  All Souls' Day
+2013-11-15  Proclamation of the Republic
+2013-12-25  Christmas Day
+
+2014-01-01  New Year's Day
+2014-03-03  Carnival Monday
+2014-03-04  Carnival Tuesday
+2014-04-18  Good Friday
+2014-04-21  Tiradentes' Day
+2014-05-01  Labour Day
+2014-06-19  Corpus Christi
+2014-09-07  Independence Day
+2014-10-12  Our Lady of Aparecida
+2014-11-02  All Souls' Day
+2014-11-15  Proclamation of the Republic
+2014-12-25  Christmas Day
+
+2015-01-01  New Year's Day
+2015-02-16  Carnival Monday
+2015-02-17  Carnival Tuesday
+2015-04-03  Good Friday
+2015-04-21  Tiradentes' Day
+2015-05-01  Labour Day
+2015-06-04  Corpus Christi
+2015-09-07  Independence Day
+2015-10-12  Our Lady of Aparecida
+2015-11-02  All Souls' Day
+2015-11-15  Proclamation of the Republic
+2015-12-25  Christmas Day
+
+2016-01-01  New Year's Day
+2016-02-08  Carnival Monday
+2016-02-09  Carnival Tuesday
+2016-03-25  Good Friday
+2016-04-21  Tiradentes' Day
+2016-05-01  Labour Day
+2016-05-26  Corpus Christi
+2016-09-07  Independence Day
+2016-10-12  Our Lady of Aparecida
+2016-11-02  All Souls' Day
+2016-11-15  Proclamation of the Republic
+2016-12-25  Christmas Day
+
+2017-01-01  New Year's Day
+2017-02-27  Carnival Monday
+2017-02-28  Carnival Tuesday
+2017-04-14  Good Friday
+2017-04-21  Tiradentes' Day
+2017-05-01  Labour Day
+2017-06-15  Corpus Christi
+2017-09-07  Independence Day
+2017-10-12  Our Lady of Aparecida
+2017-11-02  All Souls' Day
+2017-11-15  Proclamation of the Republic
+2017-12-25  Christmas Day
+
+2018-01-01  New Year's Day
+2018-02-12  Carnival Monday
+2018-02-13  Carnival Tuesday
+2018-03-30  Good Friday
+2018-04-21  Tiradentes' Day
+2018-05-01  Labour Day
+2018-05-31  Corpus Christi
+2018-09-07  Independence Day
+2018-10-12  Our Lady of Aparecida
+2018-11-02  All Souls' Day
+2018-11-15  Proclamation of the Republic
+2018-12-25  Christmas Day
+
+2019-01-01  New Year's Day
+2019-03-04  Carnival Monday
+2019-03-05  Carnival Tuesday
+2019-04-19  Good Friday
+2019-04-21  Tiradentes' Day
+2019-05-01  Labour Day
+2019-06-20  Corpus Christi
+2019-09-07  Independence Day
+2019-10-12  Our Lady of Aparecida
+2019-11-02  All Souls' Day
+2019-11-15  Proclamation of the Republic
+2019-12-25  Christmas Day
+
+2020-01-01  New Year's Day
+2020-02-24  Carnival Monday
+2020-02-25  Carnival Tuesday
+2020-04-10  Good Friday
+2020-04-21  Tiradentes' Day
+2020-05-01  Labour Day
+2020-06-11  Corpus Christi
+2020-09-07  Independence Day
+2020-10-12  Our Lady of Aparecida
+2020-11-02  All Souls' Day
+2020-11-15  Proclamation of the Republic
+2020-12-25  Christmas Day
+
+2021-01-01  New Year's Day
+2021-02-15  Carnival Monday
+2021-02-16  Carnival Tuesday
+2021-04-02  Good Friday
+2021-04-21  Tiradentes' Day
+2021-05-01  Labour Day
+2021-06-03  Corpus Christi
+2021-09-07  Independence Day
+2021-10-12  Our Lady of Aparecida
+2021-11-02  All Souls' Day
+2021-11-15  Proclamation of the Republic
+2021-12-25  Christmas Day
+
+2022-01-01  New Year's Day
+2022-02-28  Carnival Monday
+2022-03-01  Carnival Tuesday
+2022-04-15  Good Friday
+2022-04-21  Tiradentes' Day
+2022-05-01  Labour Day
+2022-06-16  Corpus Christi
+2022-09-07  Independence Day
+2022-10-12  Our Lady of Aparecida
+2022-11-02  All Souls' Day
+2022-11-15  Proclamation of the Republic
+2022-12-25  Christmas Day
+
+2023-01-01  New Year's Day
+2023-02-20  Carnival Monday
+2023-02-21  Carnival Tuesday
+2023-04-07  Good Friday
+2023-04-21  Tiradentes' Day
+2023-05-01  Labour Day
+2023-06-08  Corpus Christi
+2023-09-07  Independence Day
+2023-10-12  Our Lady of Aparecida
+2023-11-02  All Souls' Day
+2023-11-15  Proclamation of the Republic
+2023-12-25  Christmas Day
+
+2024-01-01  New Year's Day
+2024-02-12  Carnival Monday
+2024-02-13  Carnival Tuesday
+2024-03-29  Good Friday
+2024-04-21  Tiradentes' Day
+2024-05-01  Labour Day
+2024-05-30  Corpus Christi
+2024-09-07  Independence Day
+2024-10-12  Our Lady of Aparecida
+2024-11-02  All Souls' Day
+2024-11-15  Proclamation of the Republic
+2024-11-20  Black Consciousness Day
+2024-12-25  Christmas Day
+
+2025-01-01  New Year's Day
+2025-03-03  Carnival Monday
+2025-03-04  Carnival Tuesday
+2025-04-18  Good Friday
+2025-04-21  Tiradentes' Day
+2025-05-01  Labour Day
+2025-06-19  Corpus Christi
+2025-09-07  Independence Day
+2025-10-12  Our Lady of Aparecida
+2025-11-02  All Souls' Day
+2025-11-15  Proclamation of the Republic
+2025-11-20  Black Consciousness Day
+2025-12-25  Christmas Day
+
+2026-01-01  New Year's Day
+2026-02-16  Carnival Monday
+2026-02-17  Carnival Tuesday
+2026-04-03  Good Friday
+2026-04-21  Tiradentes' Day
+2026-05-01  Labour Day
+2026-06-04  Corpus Christi
+2026-09-07  Independence Day
+2026-10-12  Our Lady of Aparecida
+2026-11-02  All Souls' Day
+2026-11-15  Proclamation of the Republic
+2026-11-20  Black Consciousness Day
+2026-12-25  Christmas Day
+
+2027-01-01  New Year's Day
+2027-02-08  Carnival Monday
+2027-02-09  Carnival Tuesday
+2027-03-26  Good Friday
+2027-04-21  Tiradentes' Day
+2027-05-01  Labour Day
+2027-05-27  Corpus Christi
+2027-09-07  Independence Day
+2027-10-12  Our Lady of Aparecida
+2027-11-02  All Souls' Day
+2027-11-15  Proclamation of the Republic
+2027-11-20  Black Consciousness Day
+2027-12-25  Christmas Day
+
+2028-01-01  New Year's Day
+2028-02-28  Carnival Monday
+2028-02-29  Carnival Tuesday
+2028-04-14  Good Friday
+2028-04-21  Tiradentes' Day
+2028-05-01  Labour Day
+2028-06-15  Corpus Christi
+2028-09-07  Independence Day
+2028-10-12  Our Lady of Aparecida
+2028-11-02  All Souls' Day
+2028-11-15  Proclamation of the Republic
+2028-11-20  Black Consciousness Day
+2028-12-25  Christmas Day
+
+2029-01-01  New Year's Day
+2029-02-12  Carnival Monday
+2029-02-13  Carnival Tuesday
+2029-03-30  Good Friday
+2029-04-21  Tiradentes' Day
+2029-05-01  Labour Day
+2029-05-31  Corpus Christi
+2029-09-07  Independence Day
+2029-10-12  Our Lady of Aparecida
+2029-11-02  All Souls' Day
+2029-11-15  Proclamation of the Republic
+2029-11-20  Black Consciousness Day
+2029-12-25  Christmas Day
+
+2030-01-01  New Year's Day
+2030-03-04  Carnival Monday
+2030-03-05  Carnival Tuesday
+2030-04-19  Good Friday
+2030-04-21  Tiradentes' Day
+2030-05-01  Labour Day
+2030-06-20  Corpus Christi
+2030-09-07  Independence Day
+2030-10-12  Our Lady of Aparecida
+2030-11-02  All Souls' Day
+2030-11-15  Proclamation of the Republic
+2030-11-20  Black Consciousness Day
+2030-12-25  Christmas Day
+
+2031-01-01  New Year's Day
+2031-02-24  Carnival Monday
+2031-02-25  Carnival Tuesday
+2031-04-11  Good Friday
+2031-04-21  Tiradentes' Day
+2031-05-01  Labour Day
+2031-06-12  Corpus Christi
+2031-09-07  Independence Day
+2031-10-12  Our Lady of Aparecida
+2031-11-02  All Souls' Day
+2031-11-15  Proclamation of the Republic
+2031-11-20  Black Consciousness Day
+2031-12-25  Christmas Day
+
+2032-01-01  New Year's Day
+2032-02-09  Carnival Monday
+2032-02-10  Carnival Tuesday
+2032-03-26  Good Friday
+2032-04-21  Tiradentes' Day
+2032-05-01  Labour Day
+2032-05-27  Corpus Christi
+2032-09-07  Independence Day
+2032-10-12  Our Lady of Aparecida
+2032-11-02  All Souls' Day
+2032-11-15  Proclamation of the Republic
+2032-11-20  Black Consciousness Day
+2032-12-25  Christmas Day
+
+2033-01-01  New Year's Day
+2033-02-28  Carnival Monday
+2033-03-01  Carnival Tuesday
+2033-04-15  Good Friday
+2033-04-21  Tiradentes' Day
+2033-05-01  Labour Day
+2033-06-16  Corpus Christi
+2033-09-07  Independence Day
+2033-10-12  Our Lady of Aparecida
+2033-11-02  All Souls' Day
+2033-11-15  Proclamation of the Republic
+2033-11-20  Black Consciousness Day
+2033-12-25  Christmas Day
+
+2034-01-01  New Year's Day
+2034-02-20  Carnival Monday
+2034-02-21  Carnival Tuesday
+2034-04-07  Good Friday
+2034-04-21  Tiradentes' Day
+2034-05-01  Labour Day
+2034-06-08  Corpus Christi
+2034-09-07  Independence Day
+2034-10-12  Our Lady of Aparecida
+2034-11-02  All Souls' Day
+2034-11-15  Proclamation of the Republic
+2034-11-20  Black Consciousness Day
+2034-12-25  Christmas Day
+
+2035-01-01  New Year's Day
+2035-02-05  Carnival Monday
+2035-02-06  Carnival Tuesday
+2035-03-23  Good Friday
+2035-04-21  Tiradentes' Day
+2035-05-01  Labour Day
+2035-05-24  Corpus Christi
+2035-09-07  Independence Day
+2035-10-12  Our Lady of Aparecida
+2035-11-02  All Souls' Day
+2035-11-15  Proclamation of the Republic
+2035-11-20  Black Consciousness Day
+2035-12-25  Christmas Day
+
+2036-01-01  New Year's Day
+2036-02-25  Carnival Monday
+2036-02-26  Carnival Tuesday
+2036-04-11  Good Friday
+2036-04-21  Tiradentes' Day
+2036-05-01  Labour Day
+2036-06-12  Corpus Christi
+2036-09-07  Independence Day
+2036-10-12  Our Lady of Aparecida
+2036-11-02  All Souls' Day
+2036-11-15  Proclamation of the Republic
+2036-11-20  Black Consciousness Day
+2036-12-25  Christmas Day
+
+2037-01-01  New Year's Day
+2037-02-16  Carnival Monday
+2037-02-17  Carnival Tuesday
+2037-04-03  Good Friday
+2037-04-21  Tiradentes' Day
+2037-05-01  Labour Day
+2037-06-04  Corpus Christi
+2037-09-07  Independence Day
+2037-10-12  Our Lady of Aparecida
+2037-11-02  All Souls' Day
+2037-11-15  Proclamation of the Republic
+2037-11-20  Black Consciousness Day
+2037-12-25  Christmas Day
+
+2038-01-01  New Year's Day
+2038-03-08  Carnival Monday
+2038-03-09  Carnival Tuesday
+2038-04-21  Tiradentes' Day
+2038-04-23  Good Friday
+2038-05-01  Labour Day
+2038-06-24  Corpus Christi
+2038-09-07  Independence Day
+2038-10-12  Our Lady of Aparecida
+2038-11-02  All Souls' Day
+2038-11-15  Proclamation of the Republic
+2038-11-20  Black Consciousness Day
+2038-12-25  Christmas Day
+
+2039-01-01  New Year's Day
+2039-02-21  Carnival Monday
+2039-02-22  Carnival Tuesday
+2039-04-08  Good Friday
+2039-04-21  Tiradentes' Day
+2039-05-01  Labour Day
+2039-06-09  Corpus Christi
+2039-09-07  Independence Day
+2039-10-12  Our Lady of Aparecida
+2039-11-02  All Souls' Day
+2039-11-15  Proclamation of the Republic
+2039-11-20  Black Consciousness Day
+2039-12-25  Christmas Day
+
+2040-01-01  New Year's Day
+2040-02-13  Carnival Monday
+2040-02-14  Carnival Tuesday
+2040-03-30  Good Friday
+2040-04-21  Tiradentes' Day
+2040-05-01  Labour Day
+2040-05-31  Corpus Christi
+2040-09-07  Independence Day
+2040-10-12  Our Lady of Aparecida
+2040-11-02  All Souls' Day
+2040-11-15  Proclamation of the Republic
+2040-11-20  Black Consciousness Day
+2040-12-25  Christmas Day
+
+2041-01-01  New Year's Day
+2041-03-04  Carnival Monday
+2041-03-05  Carnival Tuesday
+2041-04-19  Good Friday
+2041-04-21  Tiradentes' Day
+2041-05-01  Labour Day
+2041-06-20  Corpus Christi
+2041-09-07  Independence Day
+2041-10-12  Our Lady of Aparecida
+2041-11-02  All Souls' Day
+2041-11-15  Proclamation of the Republic
+2041-11-20  Black Consciousness Day
+2041-12-25  Christmas Day
+
+2042-01-01  New Year's Day
+2042-02-17  Carnival Monday
+2042-02-18  Carnival Tuesday
+2042-04-04  Good Friday
+2042-04-21  Tiradentes' Day
+2042-05-01  Labour Day
+2042-06-05  Corpus Christi
+2042-09-07  Independence Day
+2042-10-12  Our Lady of Aparecida
+2042-11-02  All Souls' Day
+2042-11-15  Proclamation of the Republic
+2042-11-20  Black Consciousness Day
+2042-12-25  Christmas Day
+
+2043-01-01  New Year's Day
+2043-02-09  Carnival Monday
+2043-02-10  Carnival Tuesday
+2043-03-27  Good Friday
+2043-04-21  Tiradentes' Day
+2043-05-01  Labour Day
+2043-05-28  Corpus Christi
+2043-09-07  Independence Day
+2043-10-12  Our Lady of Aparecida
+2043-11-02  All Souls' Day
+2043-11-15  Proclamation of the Republic
+2043-11-20  Black Consciousness Day
+2043-12-25  Christmas Day
+
+2044-01-01  New Year's Day
+2044-02-29  Carnival Monday
+2044-03-01  Carnival Tuesday
+2044-04-15  Good Friday
+2044-04-21  Tiradentes' Day
+2044-05-01  Labour Day
+2044-06-16  Corpus Christi
+2044-09-07  Independence Day
+2044-10-12  Our Lady of Aparecida
+2044-11-02  All Souls' Day
+2044-11-15  Proclamation of the Republic
+2044-11-20  Black Consciousness Day
+2044-12-25  Christmas Day
+
+2045-01-01  New Year's Day
+2045-02-20  Carnival Monday
+2045-02-21  Carnival Tuesday
+2045-04-07  Good Friday
+2045-04-21  Tiradentes' Day
+2045-05-01  Labour Day
+2045-06-08  Corpus Christi
+2045-09-07  Independence Day
+2045-10-12  Our Lady of Aparecida
+2045-11-02  All Souls' Day
+2045-11-15  Proclamation of the Republic
+2045-11-20  Black Consciousness Day
+2045-12-25  Christmas Day
+
+2046-01-01  New Year's Day
+2046-02-05  Carnival Monday
+2046-02-06  Carnival Tuesday
+2046-03-23  Good Friday
+2046-04-21  Tiradentes' Day
+2046-05-01  Labour Day
+2046-05-24  Corpus Christi
+2046-09-07  Independence Day
+2046-10-12  Our Lady of Aparecida
+2046-11-02  All Souls' Day
+2046-11-15  Proclamation of the Republic
+2046-11-20  Black Consciousness Day
+2046-12-25  Christmas Day
+
+2047-01-01  New Year's Day
+2047-02-25  Carnival Monday
+2047-02-26  Carnival Tuesday
+2047-04-12  Good Friday
+2047-04-21  Tiradentes' Day
+2047-05-01  Labour Day
+2047-06-13  Corpus Christi
+2047-09-07  Independence Day
+2047-10-12  Our Lady of Aparecida
+2047-11-02  All Souls' Day
+2047-11-15  Proclamation of the Republic
+2047-11-20  Black Consciousness Day
+2047-12-25  Christmas Day
+
+2048-01-01  New Year's Day
+2048-02-17  Carnival Monday
+2048-02-18  Carnival Tuesday
+2048-04-03  Good Friday
+2048-04-21  Tiradentes' Day
+2048-05-01  Labour Day
+2048-06-04  Corpus Christi
+2048-09-07  Independence Day
+2048-10-12  Our Lady of Aparecida
+2048-11-02  All Souls' Day
+2048-11-15  Proclamation of the Republic
+2048-11-20  Black Consciousness Day
+2048-12-25  Christmas Day
+
+2049-01-01  New Year's Day
+2049-03-01  Carnival Monday
+2049-03-02  Carnival Tuesday
+2049-04-16  Good Friday
+2049-04-21  Tiradentes' Day
+2049-05-01  Labour Day
+2049-06-17  Corpus Christi
+2049-09-07  Independence Day
+2049-10-12  Our Lady of Aparecida
+2049-11-02  All Souls' Day
+2049-11-15  Proclamation of the Republic
+2049-11-20  Black Consciousness Day
+2049-12-25  Christmas Day
+
+2050-01-01  New Year's Day
+2050-02-21  Carnival Monday
+2050-02-22  Carnival Tuesday
+2050-04-08  Good Friday
+2050-04-21  Tiradentes' Day
+2050-05-01  Labour Day
+2050-06-09  Corpus Christi
+2050-09-07  Independence Day
+2050-10-12  Our Lady of Aparecida
+2050-11-02  All Souls' Day
+2050-11-15  Proclamation of the Republic
+2050-11-20  Black Consciousness Day
+2050-12-25  Christmas Day
+
+2051-01-01  New Year's Day
+2051-02-13  Carnival Monday
+2051-02-14  Carnival Tuesday
+2051-03-31  Good Friday
+2051-04-21  Tiradentes' Day
+2051-05-01  Labour Day
+2051-06-01  Corpus Christi
+2051-09-07  Independence Day
+2051-10-12  Our Lady of Aparecida
+2051-11-02  All Souls' Day
+2051-11-15  Proclamation of the Republic
+2051-11-20  Black Consciousness Day
+2051-12-25  Christmas Day
+
+2052-01-01  New Year's Day
+2052-03-04  Carnival Monday
+2052-03-05  Carnival Tuesday
+2052-04-19  Good Friday
+2052-04-21  Tiradentes' Day
+2052-05-01  Labour Day
+2052-06-20  Corpus Christi
+2052-09-07  Independence Day
+2052-10-12  Our Lady of Aparecida
+2052-11-02  All Souls' Day
+2052-11-15  Proclamation of the Republic
+2052-11-20  Black Consciousness Day
+2052-12-25  Christmas Day
+
+2053-01-01  New Year's Day
+2053-02-17  Carnival Monday
+2053-02-18  Carnival Tuesday
+2053-04-04  Good Friday
+2053-04-21  Tiradentes' Day
+2053-05-01  Labour Day
+2053-06-05  Corpus Christi
+2053-09-07  Independence Day
+2053-10-12  Our Lady of Aparecida
+2053-11-02  All Souls' Day
+2053-11-15  Proclamation of the Republic
+2053-11-20  Black Consciousness Day
+2053-12-25  Christmas Day
+
+2054-01-01  New Year's Day
+2054-02-09  Carnival Monday
+2054-02-10  Carnival Tuesday
+2054-03-27  Good Friday
+2054-04-21  Tiradentes' Day
+2054-05-01  Labour Day
+2054-05-28  Corpus Christi
+2054-09-07  Independence Day
+2054-10-12  Our Lady of Aparecida
+2054-11-02  All Souls' Day
+2054-11-15  Proclamation of the Republic
+2054-11-20  Black Consciousness Day
+2054-12-25  Christmas Day
+
+2055-01-01  New Year's Day
+2055-03-01  Carnival Monday
+2055-03-02  Carnival Tuesday
+2055-04-16  Good Friday
+2055-04-21  Tiradentes' Day
+2055-05-01  Labour Day
+2055-06-17  Corpus Christi
+2055-09-07  Independence Day
+2055-10-12  Our Lady of Aparecida
+2055-11-02  All Souls' Day
+2055-11-15  Proclamation of the Republic
+2055-11-20  Black Consciousness Day
+2055-12-25  Christmas Day
+
+2056-01-01  New Year's Day
+2056-02-14  Carnival Monday
+2056-02-15  Carnival Tuesday
+2056-03-31  Good Friday
+2056-04-21  Tiradentes' Day
+2056-05-01  Labour Day
+2056-06-01  Corpus Christi
+2056-09-07  Independence Day
+2056-10-12  Our Lady of Aparecida
+2056-11-02  All Souls' Day
+2056-11-15  Proclamation of the Republic
+2056-11-20  Black Consciousness Day
+2056-12-25  Christmas Day
+
+2057-01-01  New Year's Day
+2057-03-05  Carnival Monday
+2057-03-06  Carnival Tuesday
+2057-04-20  Good Friday
+2057-04-21  Tiradentes' Day
+2057-05-01  Labour Day
+2057-06-21  Corpus Christi
+2057-09-07  Independence Day
+2057-10-12  Our Lady of Aparecida
+2057-11-02  All Souls' Day
+2057-11-15  Proclamation of the Republic
+2057-11-20  Black Consciousness Day
+2057-12-25  Christmas Day
+
+2058-01-01  New Year's Day
+2058-02-25  Carnival Monday
+2058-02-26  Carnival Tuesday
+2058-04-12  Good Friday
+2058-04-21  Tiradentes' Day
+2058-05-01  Labour Day
+2058-06-13  Corpus Christi
+2058-09-07  Independence Day
+2058-10-12  Our Lady of Aparecida
+2058-11-02  All Souls' Day
+2058-11-15  Proclamation of the Republic
+2058-11-20  Black Consciousness Day
+2058-12-25  Christmas Day
+
+2059-01-01  New Year's Day
+2059-02-10  Carnival Monday
+2059-02-11  Carnival Tuesday
+2059-03-28  Good Friday
+2059-04-21  Tiradentes' Day
+2059-05-01  Labour Day
+2059-05-29  Corpus Christi
+2059-09-07  Independence Day
+2059-10-12  Our Lady of Aparecida
+2059-11-02  All Souls' Day
+2059-11-15  Proclamation of the Republic
+2059-11-20  Black Consciousness Day
+2059-12-25  Christmas Day
+
+2060-01-01  New Year's Day
+2060-03-01  Carnival Monday
+2060-03-02  Carnival Tuesday
+2060-04-16  Good Friday
+2060-04-21  Tiradentes' Day
+2060-05-01  Labour Day
+2060-06-17  Corpus Christi
+2060-09-07  Independence Day
+2060-10-12  Our Lady of Aparecida
+2060-11-02  All Souls' Day
+2060-11-15  Proclamation of the Republic
+2060-11-20  Black Consciousness Day
+2060-12-25  Christmas Day
+
+2061-01-01  New Year's Day
+2061-02-21  Carnival Monday
+2061-02-22  Carnival Tuesday
+2061-04-08  Good Friday
+2061-04-21  Tiradentes' Day
+2061-05-01  Labour Day
+2061-06-09  Corpus Christi
+2061-09-07  Independence Day
+2061-10-12  Our Lady of Aparecida
+2061-11-02  All Souls' Day
+2061-11-15  Proclamation of the Republic
+2061-11-20  Black Consciousness Day
+2061-12-25  Christmas Day
+
+2062-01-01  New Year's Day
+2062-02-06  Carnival Monday
+2062-02-07  Carnival Tuesday
+2062-03-24  Good Friday
+2062-04-21  Tiradentes' Day
+2062-05-01  Labour Day
+2062-05-25  Corpus Christi
+2062-09-07  Independence Day
+2062-10-12  Our Lady of Aparecida
+2062-11-02  All Souls' Day
+2062-11-15  Proclamation of the Republic
+2062-11-20  Black Consciousness Day
+2062-12-25  Christmas Day
+
+2063-01-01  New Year's Day
+2063-02-26  Carnival Monday
+2063-02-27  Carnival Tuesday
+2063-04-13  Good Friday
+2063-04-21  Tiradentes' Day
+2063-05-01  Labour Day
+2063-06-14  Corpus Christi
+2063-09-07  Independence Day
+2063-10-12  Our Lady of Aparecida
+2063-11-02  All Souls' Day
+2063-11-15  Proclamation of the Republic
+2063-11-20  Black Consciousness Day
+2063-12-25  Christmas Day
+
+2064-01-01  New Year's Day
+2064-02-18  Carnival Monday
+2064-02-19  Carnival Tuesday
+2064-04-04  Good Friday
+2064-04-21  Tiradentes' Day
+2064-05-01  Labour Day
+2064-06-05  Corpus Christi
+2064-09-07  Independence Day
+2064-10-12  Our Lady of Aparecida
+2064-11-02  All Souls' Day
+2064-11-15  Proclamation of the Republic
+2064-11-20  Black Consciousness Day
+2064-12-25  Christmas Day
+
+2065-01-01  New Year's Day
+2065-02-09  Carnival Monday
+2065-02-10  Carnival Tuesday
+2065-03-27  Good Friday
+2065-04-21  Tiradentes' Day
+2065-05-01  Labour Day
+2065-05-28  Corpus Christi
+2065-09-07  Independence Day
+2065-10-12  Our Lady of Aparecida
+2065-11-02  All Souls' Day
+2065-11-15  Proclamation of the Republic
+2065-11-20  Black Consciousness Day
+2065-12-25  Christmas Day
+
+2066-01-01  New Year's Day
+2066-02-22  Carnival Monday
+2066-02-23  Carnival Tuesday
+2066-04-09  Good Friday
+2066-04-21  Tiradentes' Day
+2066-05-01  Labour Day
+2066-06-10  Corpus Christi
+2066-09-07  Independence Day
+2066-10-12  Our Lady of Aparecida
+2066-11-02  All Souls' Day
+2066-11-15  Proclamation of the Republic
+2066-11-20  Black Consciousness Day
+2066-12-25  Christmas Day
+
+2067-01-01  New Year's Day
+2067-02-14  Carnival Monday
+2067-02-15  Carnival Tuesday
+2067-04-01  Good Friday
+2067-04-21  Tiradentes' Day
+2067-05-01  Labour Day
+2067-06-02  Corpus Christi
+2067-09-07  Independence Day
+2067-10-12  Our Lady of Aparecida
+2067-11-02  All Souls' Day
+2067-11-15  Proclamation of the Republic
+2067-11-20  Black Consciousness Day
+2067-12-25  Christmas Day
+
+2068-01-01  New Year's Day
+2068-03-05  Carnival Monday
+2068-03-06  Carnival Tuesday
+2068-04-20  Good Friday
+2068-04-21  Tiradentes' Day
+2068-05-01  Labour Day
+2068-06-21  Corpus Christi
+2068-09-07  Independence Day
+2068-10-12  Our Lady of Aparecida
+2068-11-02  All Souls' Day
+2068-11-15  Proclamation of the Republic
+2068-11-20  Black Consciousness Day
+2068-12-25  Christmas Day
+
+2069-01-01  New Year's Day
+2069-02-25  Carnival Monday
+2069-02-26  Carnival Tuesday
+2069-04-12  Good Friday
+2069-04-21  Tiradentes' Day
+2069-05-01  Labour Day
+2069-06-13  Corpus Christi
+2069-09-07  Independence Day
+2069-10-12  Our Lady of Aparecida
+2069-11-02  All Souls' Day
+2069-11-15  Proclamation of the Republic
+2069-11-20  Black Consciousness Day
+2069-12-25  Christmas Day
+
+2070-01-01  New Year's Day
+2070-02-10  Carnival Monday
+2070-02-11  Carnival Tuesday
+2070-03-28  Good Friday
+2070-04-21  Tiradentes' Day
+2070-05-01  Labour Day
+2070-05-29  Corpus Christi
+2070-09-07  Independence Day
+2070-10-12  Our Lady of Aparecida
+2070-11-02  All Souls' Day
+2070-11-15  Proclamation of the Republic
+2070-11-20  Black Consciousness Day
+2070-12-25  Christmas Day
+
+2071-01-01  New Year's Day
+2071-03-02  Carnival Monday
+2071-03-03  Carnival Tuesday
+2071-04-17  Good Friday
+2071-04-21  Tiradentes' Day
+2071-05-01  Labour Day
+2071-06-18  Corpus Christi
+2071-09-07  Independence Day
+2071-10-12  Our Lady of Aparecida
+2071-11-02  All Souls' Day
+2071-11-15  Proclamation of the Republic
+2071-11-20  Black Consciousness Day
+2071-12-25  Christmas Day
+
+2072-01-01  New Year's Day
+2072-02-22  Carnival Monday
+2072-02-23  Carnival Tuesday
+2072-04-08  Good Friday
+2072-04-21  Tiradentes' Day
+2072-05-01  Labour Day
+2072-06-09  Corpus Christi
+2072-09-07  Independence Day
+2072-10-12  Our Lady of Aparecida
+2072-11-02  All Souls' Day
+2072-11-15  Proclamation of the Republic
+2072-11-20  Black Consciousness Day
+2072-12-25  Christmas Day
+
+2073-01-01  New Year's Day
+2073-02-06  Carnival Monday
+2073-02-07  Carnival Tuesday
+2073-03-24  Good Friday
+2073-04-21  Tiradentes' Day
+2073-05-01  Labour Day
+2073-05-25  Corpus Christi
+2073-09-07  Independence Day
+2073-10-12  Our Lady of Aparecida
+2073-11-02  All Souls' Day
+2073-11-15  Proclamation of the Republic
+2073-11-20  Black Consciousness Day
+2073-12-25  Christmas Day
+
+2074-01-01  New Year's Day
+2074-02-26  Carnival Monday
+2074-02-27  Carnival Tuesday
+2074-04-13  Good Friday
+2074-04-21  Tiradentes' Day
+2074-05-01  Labour Day
+2074-06-14  Corpus Christi
+2074-09-07  Independence Day
+2074-10-12  Our Lady of Aparecida
+2074-11-02  All Souls' Day
+2074-11-15  Proclamation of the Republic
+2074-11-20  Black Consciousness Day
+2074-12-25  Christmas Day
+
+2075-01-01  New Year's Day
+2075-02-18  Carnival Monday
+2075-02-19  Carnival Tuesday
+2075-04-05  Good Friday
+2075-04-21  Tiradentes' Day
+2075-05-01  Labour Day
+2075-06-06  Corpus Christi
+2075-09-07  Independence Day
+2075-10-12  Our Lady of Aparecida
+2075-11-02  All Souls' Day
+2075-11-15  Proclamation of the Republic
+2075-11-20  Black Consciousness Day
+2075-12-25  Christmas Day
+
+2076-01-01  New Year's Day
+2076-03-02  Carnival Monday
+2076-03-03  Carnival Tuesday
+2076-04-17  Good Friday
+2076-04-21  Tiradentes' Day
+2076-05-01  Labour Day
+2076-06-18  Corpus Christi
+2076-09-07  Independence Day
+2076-10-12  Our Lady of Aparecida
+2076-11-02  All Souls' Day
+2076-11-15  Proclamation of the Republic
+2076-11-20  Black Consciousness Day
+2076-12-25  Christmas Day
+
+2077-01-01  New Year's Day
+2077-02-22  Carnival Monday
+2077-02-23  Carnival Tuesday
+2077-04-09  Good Friday
+2077-04-21  Tiradentes' Day
+2077-05-01  Labour Day
+2077-06-10  Corpus Christi
+2077-09-07  Independence Day
+2077-10-12  Our Lady of Aparecida
+2077-11-02  All Souls' Day
+2077-11-15  Proclamation of the Republic
+2077-11-20  Black Consciousness Day
+2077-12-25  Christmas Day
+
+2078-01-01  New Year's Day
+2078-02-14  Carnival Monday
+2078-02-15  Carnival Tuesday
+2078-04-01  Good Friday
+2078-04-21  Tiradentes' Day
+2078-05-01  Labour Day
+2078-06-02  Corpus Christi
+2078-09-07  Independence Day
+2078-10-12  Our Lady of Aparecida
+2078-11-02  All Souls' Day
+2078-11-15  Proclamation of the Republic
+2078-11-20  Black Consciousness Day
+2078-12-25  Christmas Day
+
+2079-01-01  New Year's Day
+2079-03-06  Carnival Monday
+2079-03-07  Carnival Tuesday
+2079-04-21  Good Friday
+2079-04-21  Tiradentes' Day
+2079-05-01  Labour Day
+2079-06-22  Corpus Christi
+2079-09-07  Independence Day
+2079-10-12  Our Lady of Aparecida
+2079-11-02  All Souls' Day
+2079-11-15  Proclamation of the Republic
+2079-11-20  Black Consciousness Day
+2079-12-25  Christmas Day
+
+2080-01-01  New Year's Day
+2080-02-19  Carnival Monday
+2080-02-20  Carnival Tuesday
+2080-04-05  Good Friday
+2080-04-21  Tiradentes' Day
+2080-05-01  Labour Day
+2080-06-06  Corpus Christi
+2080-09-07  Independence Day
+2080-10-12  Our Lady of Aparecida
+2080-11-02  All Souls' Day
+2080-11-15  Proclamation of the Republic
+2080-11-20  Black Consciousness Day
+2080-12-25  Christmas Day
+
+2081-01-01  New Year's Day
+2081-02-10  Carnival Monday
+2081-02-11  Carnival Tuesday
+2081-03-28  Good Friday
+2081-04-21  Tiradentes' Day
+2081-05-01  Labour Day
+2081-05-29  Corpus Christi
+2081-09-07  Independence Day
+2081-10-12  Our Lady of Aparecida
+2081-11-02  All Souls' Day
+2081-11-15  Proclamation of the Republic
+2081-11-20  Black Consciousness Day
+2081-12-25  Christmas Day
+
+2082-01-01  New Year's Day
+2082-03-02  Carnival Monday
+2082-03-03  Carnival Tuesday
+2082-04-17  Good Friday
+2082-04-21  Tiradentes' Day
+2082-05-01  Labour Day
+2082-06-18  Corpus Christi
+2082-09-07  Independence Day
+2082-10-12  Our Lady of Aparecida
+2082-11-02  All Souls' Day
+2082-11-15  Proclamation of the Republic
+2082-11-20  Black Consciousness Day
+2082-12-25  Christmas Day
+
+2083-01-01  New Year's Day
+2083-02-15  Carnival Monday
+2083-02-16  Carnival Tuesday
+2083-04-02  Good Friday
+2083-04-21  Tiradentes' Day
+2083-05-01  Labour Day
+2083-06-03  Corpus Christi
+2083-09-07  Independence Day
+2083-10-12  Our Lady of Aparecida
+2083-11-02  All Souls' Day
+2083-11-15  Proclamation of the Republic
+2083-11-20  Black Consciousness Day
+2083-12-25  Christmas Day
+
+2084-01-01  New Year's Day
+2084-02-07  Carnival Monday
+2084-02-08  Carnival Tuesday
+2084-03-24  Good Friday
+2084-04-21  Tiradentes' Day
+2084-05-01  Labour Day
+2084-05-25  Corpus Christi
+2084-09-07  Independence Day
+2084-10-12  Our Lady of Aparecida
+2084-11-02  All Souls' Day
+2084-11-15  Proclamation of the Republic
+2084-11-20  Black Consciousness Day
+2084-12-25  Christmas Day
+
+2085-01-01  New Year's Day
+2085-02-26  Carnival Monday
+2085-02-27  Carnival Tuesday
+2085-04-13  Good Friday
+2085-04-21  Tiradentes' Day
+2085-05-01  Labour Day
+2085-06-14  Corpus Christi
+2085-09-07  Independence Day
+2085-10-12  Our Lady of Aparecida
+2085-11-02  All Souls' Day
+2085-11-15  Proclamation of the Republic
+2085-11-20  Black Consciousness Day
+2085-12-25  Christmas Day
+
+2086-01-01  New Year's Day
+2086-02-11  Carnival Monday
+2086-02-12  Carnival Tuesday
+2086-03-29  Good Friday
+2086-04-21  Tiradentes' Day
+2086-05-01  Labour Day
+2086-05-30  Corpus Christi
+2086-09-07  Independence Day
+2086-10-12  Our Lady of Aparecida
+2086-11-02  All Souls' Day
+2086-11-15  Proclamation of the Republic
+2086-11-20  Black Consciousness Day
+2086-12-25  Christmas Day
+
+2087-01-01  New Year's Day
+2087-03-03  Carnival Monday
+2087-03-04  Carnival Tuesday
+2087-04-18  Good Friday
+2087-04-21  Tiradentes' Day
+2087-05-01  Labour Day
+2087-06-19  Corpus Christi
+2087-09-07  Independence Day
+2087-10-12  Our Lady of Aparecida
+2087-11-02  All Souls' Day
+2087-11-15  Proclamation of the Republic
+2087-11-20  Black Consciousness Day
+2087-12-25  Christmas Day
+
+2088-01-01  New Year's Day
+2088-02-23  Carnival Monday
+2088-02-24  Carnival Tuesday
+2088-04-09  Good Friday
+2088-04-21  Tiradentes' Day
+2088-05-01  Labour Day
+2088-06-10  Corpus Christi
+2088-09-07  Independence Day
+2088-10-12  Our Lady of Aparecida
+2088-11-02  All Souls' Day
+2088-11-15  Proclamation of the Republic
+2088-11-20  Black Consciousness Day
+2088-12-25  Christmas Day
+
+2089-01-01  New Year's Day
+2089-02-14  Carnival Monday
+2089-02-15  Carnival Tuesday
+2089-04-01  Good Friday
+2089-04-21  Tiradentes' Day
+2089-05-01  Labour Day
+2089-06-02  Corpus Christi
+2089-09-07  Independence Day
+2089-10-12  Our Lady of Aparecida
+2089-11-02  All Souls' Day
+2089-11-15  Proclamation of the Republic
+2089-11-20  Black Consciousness Day
+2089-12-25  Christmas Day
+
+2090-01-01  New Year's Day
+2090-02-27  Carnival Monday
+2090-02-28  Carnival Tuesday
+2090-04-14  Good Friday
+2090-04-21  Tiradentes' Day
+2090-05-01  Labour Day
+2090-06-15  Corpus Christi
+2090-09-07  Independence Day
+2090-10-12  Our Lady of Aparecida
+2090-11-02  All Souls' Day
+2090-11-15  Proclamation of the Republic
+2090-11-20  Black Consciousness Day
+2090-12-25  Christmas Day
+
+2091-01-01  New Year's Day
+2091-02-19  Carnival Monday
+2091-02-20  Carnival Tuesday
+2091-04-06  Good Friday
+2091-04-21  Tiradentes' Day
+2091-05-01  Labour Day
+2091-06-07  Corpus Christi
+2091-09-07  Independence Day
+2091-10-12  Our Lady of Aparecida
+2091-11-02  All Souls' Day
+2091-11-15  Proclamation of the Republic
+2091-11-20  Black Consciousness Day
+2091-12-25  Christmas Day
+
+2092-01-01  New Year's Day
+2092-02-11  Carnival Monday
+2092-02-12  Carnival Tuesday
+2092-03-28  Good Friday
+2092-04-21  Tiradentes' Day
+2092-05-01  Labour Day
+2092-05-29  Corpus Christi
+2092-09-07  Independence Day
+2092-10-12  Our Lady of Aparecida
+2092-11-02  All Souls' Day
+2092-11-15  Proclamation of the Republic
+2092-11-20  Black Consciousness Day
+2092-12-25  Christmas Day
+
+2093-01-01  New Year's Day
+2093-02-23  Carnival Monday
+2093-02-24  Carnival Tuesday
+2093-04-10  Good Friday
+2093-04-21  Tiradentes' Day
+2093-05-01  Labour Day
+2093-06-11  Corpus Christi
+2093-09-07  Independence Day
+2093-10-12  Our Lady of Aparecida
+2093-11-02  All Souls' Day
+2093-11-15  Proclamation of the Republic
+2093-11-20  Black Consciousness Day
+2093-12-25  Christmas Day
+
+2094-01-01  New Year's Day
+2094-02-15  Carnival Monday
+2094-02-16  Carnival Tuesday
+2094-04-02  Good Friday
+2094-04-21  Tiradentes' Day
+2094-05-01  Labour Day
+2094-06-03  Corpus Christi
+2094-09-07  Independence Day
+2094-10-12  Our Lady of Aparecida
+2094-11-02  All Souls' Day
+2094-11-15  Proclamation of the Republic
+2094-11-20  Black Consciousness Day
+2094-12-25  Christmas Day
+
+2095-01-01  New Year's Day
+2095-03-07  Carnival Monday
+2095-03-08  Carnival Tuesday
+2095-04-21  Tiradentes' Day
+2095-04-22  Good Friday
+2095-05-01  Labour Day
+2095-06-23  Corpus Christi
+2095-09-07  Independence Day
+2095-10-12  Our Lady of Aparecida
+2095-11-02  All Souls' Day
+2095-11-15  Proclamation of the Republic
+2095-11-20  Black Consciousness Day
+2095-12-25  Christmas Day
+
+2096-01-01  New Year's Day
+2096-02-27  Carnival Monday
+2096-02-28  Carnival Tuesday
+2096-04-13  Good Friday
+2096-04-21  Tiradentes' Day
+2096-05-01  Labour Day
+2096-06-14  Corpus Christi
+2096-09-07  Independence Day
+2096-10-12  Our Lady of Aparecida
+2096-11-02  All Souls' Day
+2096-11-15  Proclamation of the Republic
+2096-11-20  Black Consciousness Day
+2096-12-25  Christmas Day
+
+2097-01-01  New Year's Day
+2097-02-11  Carnival Monday
+2097-02-12  Carnival Tuesday
+2097-03-29  Good Friday
+2097-04-21  Tiradentes' Day
+2097-05-01  Labour Day
+2097-05-30  Corpus Christi
+2097-09-07  Independence Day
+2097-10-12  Our Lady of Aparecida
+2097-11-02  All Souls' Day
+2097-11-15  Proclamation of the Republic
+2097-11-20  Black Consciousness Day
+2097-12-25  Christmas Day
+
+2098-01-01  New Year's Day
+2098-03-03  Carnival Monday
+2098-03-04  Carnival Tuesday
+2098-04-18  Good Friday
+2098-04-21  Tiradentes' Day
+2098-05-01  Labour Day
+2098-06-19  Corpus Christi
+2098-09-07  Independence Day
+2098-10-12  Our Lady of Aparecida
+2098-11-02  All Souls' Day
+2098-11-15  Proclamation of the Republic
+2098-11-20  Black Consciousness Day
+2098-12-25  Christmas Day
+
+2099-01-01  New Year's Day
+2099-02-23  Carnival Monday
+2099-02-24  Carnival Tuesday
+2099-04-10  Good Friday
+2099-04-21  Tiradentes' Day
+2099-05-01  Labour Day
+2099-06-11  Corpus Christi
+2099-09-07  Independence Day
+2099-10-12  Our Lady of Aparecida
+2099-11-02  All Souls' Day
+2099-11-15  Proclamation of the Republic
+2099-11-20  Black Consciousness Day
+2099-12-25  Christmas Day

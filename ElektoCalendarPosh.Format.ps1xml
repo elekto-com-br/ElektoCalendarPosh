@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration>
+  <ViewDefinitions>
+    <View>
+      <Name>ElektoCalendarPosh.Calendar</Name>
+      <ViewSelectedBy>
+        <TypeName>ElektoCalendarPosh.Calendar</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader><Label>Name</Label></TableColumnHeader>
+          <TableColumnHeader><Label>Weekend</Label></TableColumnHeader>
+          <TableColumnHeader><Label>MinDate</Label></TableColumnHeader>
+          <TableColumnHeader><Label>MaxDate</Label></TableColumnHeader>
+          <TableColumnHeader><Label>Holidays</Label><Alignment>Right</Alignment></TableColumnHeader>
+          <TableColumnHeader><Label>Path</Label></TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem><PropertyName>Name</PropertyName></TableColumnItem>
+              <TableColumnItem><ScriptBlock>$_.Weekend -join ', '</ScriptBlock></TableColumnItem>
+              <TableColumnItem><ScriptBlock>if ($null -ne $_.MinDate) { $_.MinDate.ToString('yyyy-MM-dd', [cultureinfo]::InvariantCulture) }</ScriptBlock></TableColumnItem>
+              <TableColumnItem><ScriptBlock>if ($null -ne $_.MaxDate) { $_.MaxDate.ToString('yyyy-MM-dd', [cultureinfo]::InvariantCulture) }</ScriptBlock></TableColumnItem>
+              <TableColumnItem><ScriptBlock>$_.Holidays.Count</ScriptBlock></TableColumnItem>
+              <TableColumnItem><PropertyName>Path</PropertyName></TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+  </ViewDefinitions>
+</Configuration>

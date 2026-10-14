@@ -97,6 +97,8 @@ PrivateData = @{
 - Get-NextWorkday, Get-NextOrSameWorkday, Get-PreviousWorkday, Get-PreviousOrSameWorkday
 - Add-Workday, Add-CalendarDay (with Following, Preceding and Modified conventions), Get-WorkdayDelta
 - Get-FirstWorkdayInMonth, Get-LastWorkdayInMonth, Get-NthWorkdayInMonth, Get-Workday
+- An error about a date (outside the calendar, a month without workdays) stops the command by default and follows -ErrorAction when it is given; every error has a stable id
+- Holiday files are parsed once, and again only when their content changes
 '@
 
     } # End of PSData hashtable

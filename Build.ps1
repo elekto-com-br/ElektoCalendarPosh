@@ -7,7 +7,8 @@ The PowerShell equivalent of "does it compile and pass": every script is parsed 
 the manifest is validated, PSScriptAnalyzer runs (when installed) and the Pester tests run (when
 Pester 5 or later is installed). If everything passes, the package is staged at
 ./out/ElektoCalendarPosh, with all the functions in a single .psm1, and imported in a clean process
-to check that every function in the manifest is exported. It is then ready for Publish-PSResource.
+to check that every function in the manifest is exported and has its help. It is then ready for
+Publish-PSResource.
 
 Used by the GitHub workflows; can also be run locally before committing or tagging.
 
@@ -99,7 +100,10 @@ foreach ($file in $packageFiles) {
 }
 $merged = foreach ($folder in 'Private', 'Public') {
     foreach ($script in Get-ChildItem -Path (Join-Path $PSScriptRoot $folder) -Filter '*.ps1') {
+        # The blank line keeps the region comment apart from the help comment that opens the file:
+        # glued together, PowerShell reads them as one comment and the function loses its help
         "#region $folder/$($script.Name)"
+        ''
         [IO.File]::ReadAllText($script.FullName).TrimEnd()
         '#endregion'
         ''
@@ -108,13 +112,16 @@ $merged = foreach ($folder in 'Private', 'Public') {
 [IO.File]::WriteAllLines((Join-Path $outDir "$moduleName.psm1"), [string[]]$merged, [Text.UTF8Encoding]::new($false))
 Write-Host "Package staged at $outDir."
 
-# 6. Import the package in a clean process: every function in the manifest is exported, and works
+# 6. Import the package in a clean process: every function in the manifest is exported, has its help,
+#    and works
 pwsh -NoProfile -NonInteractive -Command {
     param($Manifest, $Name)
     Import-Module $Manifest -Force -ErrorAction Stop
-    $missing = (Import-PowerShellDataFile $Manifest).FunctionsToExport |
-        Where-Object { -not (Get-Command $_ -Module $Name -ErrorAction SilentlyContinue) }
+    $functions = (Import-PowerShellDataFile $Manifest).FunctionsToExport
+    $missing = $functions | Where-Object { -not (Get-Command $_ -Module $Name -ErrorAction SilentlyContinue) }
     if ($missing) { throw "Not exported: $($missing -join ', ')" }
+    $withoutHelp = $functions | Where-Object { -not (Get-Help $_).Description }
+    if ($withoutHelp) { throw "No help in the package for: $($withoutHelp -join ', ')" }
     $friday = [datetime]'2026-10-16'
     if ((Add-Workday 1 $friday) -ne $friday.AddDays(3)) { throw 'Add-Workday gave a wrong answer.' }
 } -args (Join-Path $outDir "$moduleName.psd1"), $moduleName

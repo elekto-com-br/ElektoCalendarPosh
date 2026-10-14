@@ -12,7 +12,7 @@
 RootModule = 'ElektoCalendarPosh.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.1.0'
+ModuleVersion = '0.1.1'
 
 # Supported PSEditions
 CompatiblePSEditions = @('Core')
@@ -88,6 +88,9 @@ PrivateData = @{
 
         # ReleaseNotes of this module
         ReleaseNotes = @'
+## 0.1.1
+- The package carries the help of every command, which 0.1.0 lost when the build merged the functions into one file
+
 ## 0.1.0
 - Calendars from plain-text holiday files (ISO dates, optional non-working weekdays or NoWeekend), from lists of dates, or Saturday and Sunday only by default
 - A calendar covers from its first holiday to its last

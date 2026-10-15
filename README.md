@@ -22,6 +22,10 @@ A lightweight PowerShell module for business day (workday) arithmetic, driven by
 Install-Module -Name ElektoCalendarPosh
 ```
 
+### From a Release (No Gallery Access)
+
+Each version has a [release](https://github.com/elekto-com-br/ElektoCalendarPosh/releases) with the package as `ElektoCalendarPosh-<version>.zip`: extract it into a folder listed in `$env:PSModulePath`.
+
 ### From Source
 
 ```powershell

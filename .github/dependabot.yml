@@ -1,0 +1,15 @@
+# The actions in the workflows are pinned by commit SHA, so new versions do not arrive by themselves:
+# Dependabot proposes them in a pull request, updating the SHA and its version comment together.
+# The PowerShell tools pinned in the workflows (Pester, PSScriptAnalyzer) are not covered: bump them by hand.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci
+    groups:
+      actions:
+        patterns:
+          - '*'

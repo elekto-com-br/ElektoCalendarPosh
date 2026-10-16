@@ -12,7 +12,7 @@
 RootModule = 'ElektoCalendarPosh.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.1.1'
+ModuleVersion = '0.1.2'
 
 # Supported PSEditions
 CompatiblePSEditions = @('Core')
@@ -27,7 +27,7 @@ Author = 'JP Negri'
 CompanyName = 'Elekto Produtos Financeiros'
 
 # Copyright statement for this module
-Copyright = '(c) JP Negri. All rights reserved.'
+Copyright = '(c) 2026 Elekto Produtos Financeiros. Licensed under the MIT License.'
 
 # Description of the functionality provided by this module
 Description = 'Business day (workday) arithmetic for PowerShell, driven by plain-text holiday calendars: next and previous workdays, adding workdays, counting workdays between dates, month boundaries and business day conventions. Zero dependencies, cross-platform.'
@@ -88,6 +88,9 @@ PrivateData = @{
 
         # ReleaseNotes of this module
         ReleaseNotes = @'
+## 0.1.2
+- The copyright in the manifest names Elekto Produtos Financeiros, as the LICENSE does
+
 ## 0.1.1
 - The package carries the help of every command, which 0.1.0 lost when the build merged the functions into one file
 
